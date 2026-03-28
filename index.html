@@ -309,60 +309,87 @@
     <!-- 7. Flags (existing — KEEP AS IS) -->
     <div class="flags-block" id="flagsBlock" style="display:none"></div>
 
+    <!--
+      ═══════════════════════════════════════════════════
+      ALL original renderer.js target elements kept here
+      in their original order so renderer.js never hits null.
+      Some are duplicated above (sfCoreReason etc.) for the
+      new UI, but these are the ORIGINALS the engine writes to.
+      ═══════════════════════════════════════════════════
+    -->
+
+    <!-- Core Reason (original renderer target) -->
+    <div class="block" id="coreReasonBlock" style="display:none"></div>
+
     <!-- Impact (stressed state) -->
     <div class="impact-header" id="impactHeader"></div>
     <div class="impact-grid" id="impactGrid"></div>
 
-    <!-- 8. Collapsible detailed analysis wrapper -->
+    <!-- Scenarios -->
+    <div class="block" id="scenarioBlock"></div>
+
+    <!-- Analysis -->
+    <div class="block">
+      <div class="block-label">Stress Impact Analysis</div>
+      <div class="analysis-text" id="analysisText"></div>
+    </div>
+
+    <!-- Recovery -->
+    <div class="recovery-block" id="recoveryBlock" style="display:none"></div>
+
+    <!-- Recommendations -->
+    <div class="block">
+      <div class="block-label">How to Prevent / Mitigate</div>
+      <ul class="reco-list" id="recoList"></ul>
+    </div>
+
+    <!-- Decision Delta (original) -->
+    <div class="block" id="deltaBlock" style="display:none"></div>
+
+    <!-- Prepayment -->
+    <div class="block" id="prepayBlock" style="display:none"></div>
+
+    <!-- Crossover -->
+    <div class="block" id="crossoverBlock" style="display:none"></div>
+
+    <!-- Baseline ref -->
+    <div class="baseline-ref" id="baselineRef"></div>
+
+    <!-- Eligibility -->
+    <div class="block" id="eligBlock"></div>
+
+    <!-- EMI Trend -->
+    <div class="block" id="trendBlock" style="display:none"></div>
+
+    <!-- Breakpoints -->
+    <div class="block">
+      <div class="block-label">Critical Thresholds</div>
+      <div id="breakpointRows"></div>
+    </div>
+
+    <!-- Perspective -->
+    <div class="block" id="perspectiveBlock" style="display:none"></div>
+
+    <!--
+      Shorthand ID aliases — renderer.js may use abbreviated IDs
+      from the spec doc (scB, dB, fB, impG, eT, crB, scnB, bpR, psyB).
+      Adding hidden divs so renderer.js never gets null.
+    -->
+    <div id="scB" style="display:none"></div>
+    <div id="dB" style="display:none"></div>
+    <div id="fB" style="display:none"></div>
+    <div id="impG" style="display:none"></div>
+    <div id="eT" style="display:none"></div>
+    <div id="crB" style="display:none"></div>
+    <div id="scnB" style="display:none"></div>
+    <div id="bpR" style="display:none"></div>
+    <div id="psyB" style="display:none"></div>
+
+    <!-- 8. Collapsible "View Detailed Analysis" wrapper -->
     <details class="sf-details-toggle" id="sfDetailsToggle">
       <summary class="sf-details-summary">▸ View Detailed Analysis</summary>
       <div class="sf-details-content">
-
-        <!-- Scenarios -->
-        <div class="block" id="scenarioBlock"></div>
-
-        <!-- Analysis -->
-        <div class="block">
-          <div class="block-label">Stress Impact Analysis</div>
-          <div class="analysis-text" id="analysisText"></div>
-        </div>
-
-        <!-- Recovery -->
-        <div class="recovery-block" id="recoveryBlock" style="display:none"></div>
-
-        <!-- Recommendations -->
-        <div class="block">
-          <div class="block-label">How to Prevent / Mitigate</div>
-          <ul class="reco-list" id="recoList"></ul>
-        </div>
-
-        <!-- Decision Delta (original) -->
-        <div class="block" id="deltaBlock" style="display:none"></div>
-
-        <!-- Prepayment -->
-        <div class="block" id="prepayBlock" style="display:none"></div>
-
-        <!-- Crossover -->
-        <div class="block" id="crossoverBlock" style="display:none"></div>
-
-        <!-- Baseline ref -->
-        <div class="baseline-ref" id="baselineRef"></div>
-
-        <!-- Eligibility -->
-        <div class="block" id="eligBlock"></div>
-
-        <!-- EMI Trend -->
-        <div class="block" id="trendBlock" style="display:none"></div>
-
-        <!-- Breakpoints -->
-        <div class="block">
-          <div class="block-label">Critical Thresholds</div>
-          <div id="breakpointRows"></div>
-        </div>
-
-        <!-- Perspective -->
-        <div class="block" id="perspectiveBlock" style="display:none"></div>
-
+        <p class="sf-microcopy">Expand for full scenario breakdown, eligibility details, critical thresholds, and baseline reference data.</p>
       </div>
     </details>
   </div>
