@@ -290,57 +290,109 @@
 
     <!-- SECTION 1: HERO -->
     <div id="hero">
-      <div class="hero-score" id="heroScore"></div>
-      <div class="hero-verdict" id="heroVerdict"></div>
-      <div class="hero-summary" id="heroSummary"></div>
+      <div class="hero-score-col">
+        <div class="hero-score" id="heroScore">0</div>
+        <div class="hero-score-label">/ 100</div>
+      </div>
+      <div class="hero-content-col">
+        <div class="hero-tag" id="heroVerdictTag"></div>
+        <div class="hero-verdict" id="heroVerdict"></div>
+        <div class="hero-oneliner" id="heroOneliner"></div>
+        <div class="hero-truth" id="heroTruth"></div>
+      </div>
     </div>
 
-    <!-- SECTION 2: 3 CORE METRICS -->
+    <!-- SECTION 2: SAFETY PROGRESS BAR -->
+    <div id="safety-bar">
+      <div class="sb-row">
+        <span class="sb-label">Safety Level</span>
+        <span class="sb-score" id="sbScore"></span>
+      </div>
+      <div class="sb-track">
+        <div class="sb-zones">
+          <div class="sb-zone danger" style="width:30%"></div>
+          <div class="sb-zone risky" style="width:20%"></div>
+          <div class="sb-zone moderate" style="width:20%"></div>
+          <div class="sb-zone safe" style="width:30%"></div>
+        </div>
+        <div class="sb-fill" id="sbFill"></div>
+        <div class="sb-cursor" id="sbCursor"></div>
+      </div>
+      <div class="sb-hint" id="sbHint"></div>
+    </div>
+
+    <!-- SECTION 3: 3 CORE METRICS -->
     <div id="core-metrics">
       <div class="metric-card" data-expand="net">
-        <div class="metric-value" id="cmNet"></div>
-        <div class="metric-label">Monthly Net</div>
-        <div class="metric-sub">Under stress · tap for details</div>
+        <div class="mc-inner">
+          <div class="mc-top">
+            <div class="mc-value" id="cmNet"></div>
+            <div class="mc-icon">&#8594;</div>
+          </div>
+          <div class="mc-meaning" id="cmNetMeaning"></div>
+          <div class="mc-label">Monthly Net</div>
+          <div class="mc-context">under income stress</div>
+        </div>
       </div>
       <div class="metric-card" data-expand="survival">
-        <div class="metric-value" id="cmSurvival"></div>
-        <div class="metric-label">Time to Failure</div>
-        <div class="metric-sub">Under shock · tap for details</div>
+        <div class="mc-inner">
+          <div class="mc-top">
+            <div class="mc-value" id="cmSurvival"></div>
+            <div class="mc-icon">&#8594;</div>
+          </div>
+          <div class="mc-meaning" id="cmSurvivalMeaning"></div>
+          <div class="mc-label">Time to Failure</div>
+          <div class="mc-context">under income stress</div>
+        </div>
       </div>
       <div class="metric-card" data-expand="emi">
-        <div class="metric-value" id="cmEmi"></div>
-        <div class="metric-label">EMI Ratio</div>
-        <div class="metric-sub">Under stress · tap for details</div>
+        <div class="mc-inner">
+          <div class="mc-top">
+            <div class="mc-value" id="cmEmi"></div>
+            <div class="mc-icon">&#8594;</div>
+          </div>
+          <div class="mc-meaning" id="cmEmiMeaning"></div>
+          <div class="mc-label">EMI Ratio</div>
+          <div class="mc-context">of monthly income</div>
+        </div>
       </div>
     </div>
 
-    <!-- Metric expand details (hidden by default) -->
-    <div class="metric-detail" id="expand-net" style="display:none"></div>
-    <div class="metric-detail" id="expand-survival" style="display:none"></div>
-    <div class="metric-detail" id="expand-emi" style="display:none"></div>
+    <!-- Metric expand panels -->
+    <div class="metric-expand-panel" id="expand-net" style="display:none"></div>
+    <div class="metric-expand-panel" id="expand-survival" style="display:none"></div>
+    <div class="metric-expand-panel" id="expand-emi" style="display:none"></div>
 
-    <!-- SECTION 3: WORST CASE -->
-    <div id="worst-case" class="alert-card">
-      <div class="wc-title">&#9888; Worst Case Scenario</div>
-      <div id="wcContent" class="wc-content"></div>
+    <!-- SECTION 4: WORST CASE -->
+    <div id="worst-case">
+      <div class="wc-header">
+        <div class="wc-badge">&#9888; WORST CASE</div>
+        <div class="wc-shock-label" id="wcShockLabel"></div>
+      </div>
+      <div class="wc-stats-grid" id="wcStatsGrid"></div>
+      <div class="wc-life-block">
+        <div class="wc-life-title">What this means for your life</div>
+        <div id="wcLifeImpact" class="wc-life-list"></div>
+      </div>
     </div>
 
-    <!-- SECTION 4: TOP RISKS -->
-    <div id="top-risks">
-      <div class="tr-label">Top Risks</div>
-      <div id="topRisksItems"></div>
+    <!-- SECTION 5: TOP RISKS -->
+    <div id="top-risks" style="display:none">
+      <div class="tr-header">Key Risk Factors</div>
+      <div class="tr-tags" id="topRisksTags"></div>
     </div>
 
-    <!-- SECTION 5: DECISION DELTA -->
+    <!-- SECTION 6: DECISION DELTA -->
     <div id="decision-delta">
-      <div class="dd-title" id="ddTitle"></div>
+      <div class="dd-header" id="ddHeader"></div>
+      <div class="dd-subtitle" id="ddSubtitle"></div>
       <div id="ddOptions"></div>
     </div>
 
-    <!-- SECTION 6: EXPANDABLE DETAILS -->
+    <!-- SECTION 7: EXPANDABLE FULL ANALYSIS -->
     <div class="expandable" id="detailsExpandable">
       <div class="expand-header" id="expandToggleBtn">
-        <span>Detailed Analysis</span>
+        <span>Full Analysis</span>
         <span class="expand-arrow" id="expandArrow">&#8595;</span>
       </div>
       <div class="expand-content" id="expandContent" style="display:none">
@@ -356,7 +408,7 @@
       </div>
     </div>
 
-    <!-- Hidden compat divs — renderer writes here for backward compat -->
+    <!-- Hidden compat divs -->
     <div id="scoreBlock" style="display:none"></div>
     <div id="flagsBlock" style="display:none"></div>
     <div id="impactHeader" style="display:none"></div>
