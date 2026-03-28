@@ -168,6 +168,11 @@ el('analyzeBtn').addEventListener('click', function() {
     // ── RENDER ──
     renderResults(ctx);
 
+    // ── ENHANCED OUTPUT (additive — does not touch core render) ──
+    renderCoreReason(ctx);
+    renderWorstCase(ctx);
+    renderDeltaSummary(ctx);
+
   } catch (ex) {
     var errEl = el('errorMsg');
     errEl.textContent = '⚠ Error: ' + ex.message;
