@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Loan Decision Engine</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/variables.css">
-<link rel="stylesheet" href="css/layout.css">
-<link rel="stylesheet" href="css/components.css">
-<link rel="stylesheet" href="css/results.css">
-<link rel="stylesheet" href="css/wizard.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loan Decision Engine</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/results.css">
+  <link rel="stylesheet" href="css/stepflow.css">
 </head>
 <body>
 
@@ -24,220 +24,230 @@
 <div class="container">
 
   <!-- ═══════════════════════════════════ -->
-  <!-- WIZARD PANEL (left side)           -->
+  <!-- INPUT PANEL (now wrapped in steps) -->
   <!-- ═══════════════════════════════════ -->
-  <div class="panel" id="wizardPanel">
-
-    <!-- Step progress header -->
-    <div class="wizard-header" id="wizardHeader">
-      <div class="step-indicator" id="stepIndicator">Step 1 of 7</div>
-      <div class="step-bar" id="stepBar"><div class="step-bar-fill" id="stepBarFill"></div></div>
+  <div class="panel" id="inputPanel">
+    <div class="panel-header">
+      <span class="tag">01</span>
+      <h2>Financial Profile</h2>
     </div>
 
-    <!-- ─── STEP 0: INTENT ─── -->
-    <div class="wizard-step active" id="step-0">
-      <div class="step-body intent-screen">
-        <div class="intent-title">What do you want to check?</div>
-        <div class="intent-sub">We'll tailor the questions based on your goal.</div>
-        <button class="intent-btn" data-intent="new">
-          <span class="intent-icon">🏠</span>
-          <div>
-            <div class="intent-btn-title">Can I afford a home loan?</div>
-            <div class="intent-btn-sub">Check eligibility, affordability & stress</div>
-          </div>
-        </button>
-        <button class="intent-btn" data-intent="existing">
-          <span class="intent-icon">🛡</span>
-          <div>
-            <div class="intent-btn-title">Am I financially safe right now?</div>
-            <div class="intent-btn-sub">Test your current financial resilience</div>
-          </div>
-        </button>
-      </div>
-    </div>
+    <!-- Step progress bar -->
+    <div class="step-progress" id="stepProgress"></div>
+    <div class="step-label" id="stepLabel"></div>
 
-    <!-- ─── STEP 1: INCOME ─── -->
-    <div class="wizard-step" id="step-1">
-      <div class="step-title-bar">
-        <div class="step-name">Income</div>
-        <div class="step-copy">Your income determines your baseline capacity.</div>
-      </div>
-      <div class="step-body">
-        <div class="field">
-          <label>Net Monthly Income (₹)</label>
-          <div class="input-prefix"><span>₹</span>
-            <input type="number" id="income" placeholder="e.g. 80000" min="0">
-          </div>
-        </div>
-        <div class="field-row">
-          <div class="field">
-            <label>Income Type</label>
-            <div class="select-wrap">
-              <select id="incomeType">
-                <option value="salaried">Salaried</option>
-                <option value="self-employed">Self-Employed</option>
-              </select>
-            </div>
-          </div>
-          <div class="field">
-            <label>Income Shock %</label>
-            <input type="number" id="incomeShock" value="30" min="0" max="100">
-            <div class="shock-hint" id="shockHint">⚠ Min 40% for self-employed</div>
-          </div>
-        </div>
-        <div class="field">
-          <label>Annual Bonus (₹) <span class="hint">optional</span></label>
-          <div class="input-prefix"><span>₹</span>
-            <input type="number" id="annualBonus" placeholder="0" min="0" value="0">
-          </div>
-        </div>
-        <div class="field">
-          <label>Dependents <span class="hint">spouse, children, parents</span></label>
-          <input type="number" id="dependents" placeholder="0" min="0" value="0">
+    <!-- ══════════════════════════════ -->
+    <!-- STEP 0 — Intent Screen (NEW) -->
+    <!-- ══════════════════════════════ -->
+    <div class="step active" id="step-0" data-step="0">
+      <div class="step-intro">
+        <h2 class="step-question">What do you want to check?</h2>
+        <p class="step-microcopy">Choose your goal — we'll tailor the flow accordingly.</p>
+        <div class="intent-buttons">
+          <button class="intent-btn" data-intent="new" id="intentNew">
+            <span class="intent-icon">🏠</span>
+            <span class="intent-title">Can I afford a home loan?</span>
+            <span class="intent-desc">Check eligibility, affordability & stress for a new loan</span>
+          </button>
+          <button class="intent-btn" data-intent="existing" id="intentExisting">
+            <span class="intent-icon">🛡️</span>
+            <span class="intent-title">Am I financially safe right now?</span>
+            <span class="intent-desc">Stress-test your current finances without a new loan</span>
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- ─── STEP 2: EXISTING EMIS ─── -->
-    <div class="wizard-step" id="step-2">
-      <div class="step-title-bar">
-        <div class="step-name">Existing EMIs</div>
-        <div class="step-copy">Current debt obligations affect how much new EMI you can carry.</div>
+    <!-- ══════════════════════════════ -->
+    <!-- STEP 1 — Income              -->
+    <!-- ══════════════════════════════ -->
+    <div class="step" id="step-1" data-step="1">
+      <div class="step-section-title">Income Details</div>
+      <p class="step-microcopy">Your primary income drives all affordability checks.</p>
+
+      <div class="field">
+        <label>Net Monthly Income (₹)</label>
+        <div class="input-prefix"><span>₹</span>
+          <input type="number" id="income" placeholder="e.g. 80000" min="0">
+        </div>
       </div>
-      <div class="step-body">
+      <div class="field-row">
         <div class="field">
-          <label>Secured EMIs (₹/mo) <span class="hint">home, auto</span></label>
-          <div class="input-prefix"><span>₹</span>
-            <input type="number" id="securedEMI" placeholder="0" min="0" value="0">
+          <label>Income Type</label>
+          <div class="select-wrap">
+            <select id="incomeType">
+              <option value="salaried">Salaried</option>
+              <option value="self-employed">Self-Employed</option>
+            </select>
           </div>
         </div>
         <div class="field">
-          <label>Unsecured EMIs (₹/mo) <span class="hint">personal loans, credit cards</span></label>
-          <div class="input-prefix"><span>₹</span>
-            <input type="number" id="unsecuredEMI" placeholder="0" min="0" value="0">
-          </div>
+          <label>Income Shock %</label>
+          <input type="number" id="incomeShock" value="30" min="0" max="100">
+          <div class="shock-hint" id="shockHint">⚠ Min 40% for self-employed</div>
         </div>
-        <div class="live-hint" id="emiHint"></div>
+      </div>
+      <div class="field">
+        <label>Annual Bonus (₹) <span class="hint">optional</span></label>
+        <div class="input-prefix"><span>₹</span>
+          <input type="number" id="annualBonus" placeholder="0" min="0" value="0">
+        </div>
       </div>
     </div>
 
-    <!-- ─── STEP 3: EXPENSES ─── -->
-    <div class="wizard-step" id="step-3">
-      <div class="step-title-bar">
-        <div class="step-name">Monthly Expenses</div>
-        <div class="step-copy">Honest expense data gives you accurate stress results.</div>
-      </div>
-      <div class="step-body">
-        <div class="field">
-          <label>Essential (₹) <span class="hint">rent, food, utilities, insurance</span></label>
-          <div class="input-prefix"><span>₹</span>
-            <input type="number" id="essentialExp" placeholder="e.g. 25000" min="0">
-          </div>
+    <!-- ══════════════════════════════ -->
+    <!-- STEP 2 — Existing EMIs        -->
+    <!-- ══════════════════════════════ -->
+    <div class="step" id="step-2" data-step="2">
+      <div class="step-section-title">Existing EMIs</div>
+      <p class="step-microcopy">Current loan obligations reduce your borrowing capacity.</p>
+
+      <div class="field">
+        <label>Secured EMIs (₹/mo) <span class="hint">home, auto</span></label>
+        <div class="input-prefix"><span>₹</span>
+          <input type="number" id="securedEMI" placeholder="0" min="0" value="0">
         </div>
+      </div>
+      <div class="field">
+        <label>Unsecured EMIs (₹/mo) <span class="hint">personal, cards</span></label>
+        <div class="input-prefix"><span>₹</span>
+          <input type="number" id="unsecuredEMI" placeholder="0" min="0" value="0">
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════ -->
+    <!-- STEP 3 — Expenses             -->
+    <!-- ══════════════════════════════ -->
+    <div class="step" id="step-3" data-step="3">
+      <div class="step-section-title">Monthly Expenses</div>
+      <p class="step-microcopy">Essential and lifestyle spending shapes your disposable income.</p>
+
+      <div class="field">
+        <label>Dependents <span class="hint">spouse, children, parents</span></label>
+        <input type="number" id="dependents" placeholder="e.g. 2" min="0" value="0">
+      </div>
+      <div class="field">
+        <label>Essential (₹) <span class="hint">rent, food, utilities</span></label>
+        <div class="input-prefix"><span>₹</span>
+          <input type="number" id="essentialExp" placeholder="e.g. 25000" min="0">
+        </div>
+      </div>
+      <div class="field-row">
         <div class="field">
-          <label>Lifestyle (₹) <span class="hint">dining, entertainment, subscriptions</span></label>
+          <label>Lifestyle (₹)</label>
           <div class="input-prefix"><span>₹</span>
             <input type="number" id="lifestyleExp" placeholder="0" min="0" value="0">
           </div>
         </div>
         <div class="field">
-          <label>Semi-Fixed (₹) <span class="hint">school fees, family support</span></label>
+          <label>Semi-Fixed (₹) <span class="hint">school, family</span></label>
           <div class="input-prefix"><span>₹</span>
             <input type="number" id="semiFixedExp" placeholder="0" min="0" value="0">
           </div>
         </div>
-        <div class="live-hint" id="expHint"></div>
       </div>
     </div>
 
-    <!-- ─── STEP 4: SAVINGS ─── -->
-    <div class="wizard-step" id="step-4">
-      <div class="step-title-bar">
-        <div class="step-name">Savings & Liquidity</div>
-        <div class="step-copy">Your liquid safety net. FDs count at 70%, other investments at 30%.</div>
-      </div>
-      <div class="step-body">
+    <!-- ══════════════════════════════ -->
+    <!-- STEP 4 — Savings              -->
+    <!-- ══════════════════════════════ -->
+    <div class="step" id="step-4" data-step="4">
+      <div class="step-section-title">Savings & Liquidity</div>
+      <p class="step-microcopy">Your financial cushion determines how long you survive a shock.</p>
+
+      <div class="field-row3">
         <div class="field">
-          <label>Cash + Bank Balance (₹) <span class="hint">instantly accessible</span></label>
+          <label>Cash + Bank (₹) <span class="hint">instant</span></label>
           <div class="input-prefix"><span>₹</span>
-            <input type="number" id="cashBalance" placeholder="e.g. 100000" min="0" value="0">
+            <input type="number" id="cashBalance" placeholder="100000" min="0" value="0">
           </div>
         </div>
         <div class="field">
-          <label>Fixed Deposits (₹) <span class="hint">70% usable in emergency</span></label>
+          <label>Fixed Deposits (₹) <span class="hint">70% usable</span></label>
           <div class="input-prefix"><span>₹</span>
             <input type="number" id="fdBalance" placeholder="0" min="0" value="0">
           </div>
         </div>
         <div class="field">
-          <label>Other Investments (₹) <span class="hint">30% usable — MF, stocks</span></label>
+          <label>Other Invest. (₹) <span class="hint">30% usable</span></label>
           <div class="input-prefix"><span>₹</span>
             <input type="number" id="otherSavings" placeholder="0" min="0" value="0">
           </div>
         </div>
-        <div class="live-hint" id="savingsHint"></div>
+      </div>
+
+      <!-- Live survival indicator -->
+      <div class="live-survival" id="liveSurvival">
+        <span class="survival-icon">🛟</span>
+        <span class="survival-text" id="survivalText">Enter savings to see survival estimate</span>
       </div>
     </div>
 
-    <!-- ─── STEP 5: LOAN (new intent only) ─── -->
-    <div class="wizard-step" id="step-5">
-      <div class="step-title-bar">
-        <div class="step-name">New Loan Details</div>
-        <div class="step-copy">We'll compute your EMI and run 6 stress scenarios.</div>
-      </div>
-      <div class="step-body">
-        <div class="field-row">
-          <div class="field">
-            <label>New Loan Amount (₹)</label>
-            <div class="input-prefix"><span>₹</span>
-              <input type="number" id="loanAmount" placeholder="e.g. 5000000" min="0">
-            </div>
-          </div>
-          <div class="field">
-            <label>Loan Purpose</label>
-            <div class="select-wrap">
-              <select id="loanPurpose">
-                <option value="home">Home Loan</option>
-                <option value="auto">Auto Loan</option>
-                <option value="personal">Personal Loan</option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <div class="field-row3">
-          <div class="field">
-            <label>Rate (% p.a.)</label>
-            <input type="number" id="interestRate" placeholder="8.5" min="0" step="0.1">
-          </div>
-          <div class="field">
-            <label>Tenure (mo)</label>
-            <input type="number" id="tenure" placeholder="240" min="1">
-          </div>
-          <div class="field">
-            <label>Type</label>
-            <div class="select-wrap">
-              <select id="rateType">
-                <option value="floating">Floating</option>
-                <option value="fixed">Fixed</option>
-              </select>
-            </div>
+    <!-- ══════════════════════════════ -->
+    <!-- STEP 5 — Loan (NEW only)      -->
+    <!-- ══════════════════════════════ -->
+    <div class="step" id="step-5" data-step="5" data-intent-only="new">
+      <div class="step-section-title">New Loan Details</div>
+      <p class="step-microcopy">Tell us about the loan you're considering.</p>
+
+      <div class="field-row">
+        <div class="field">
+          <label>New Loan Amount (₹)</label>
+          <div class="input-prefix"><span>₹</span>
+            <input type="number" id="loanAmount" placeholder="e.g. 5000000" min="0">
           </div>
         </div>
         <div class="field">
-          <label>Months Already Paid <span class="hint">0 if new</span></label>
-          <input type="number" id="monthsPaid" placeholder="0" min="0" value="0">
+          <label>Loan Purpose</label>
+          <div class="select-wrap">
+            <select id="loanPurpose">
+              <option value="home">Home Loan</option>
+              <option value="auto">Auto Loan</option>
+              <option value="personal">Personal Loan</option>
+            </select>
+          </div>
         </div>
-        <div class="live-hint" id="emiLiveHint"></div>
+      </div>
+      <div class="field-row3">
+        <div class="field">
+          <label>Rate (%)</label>
+          <input type="number" id="interestRate" placeholder="8.5" min="0" step="0.1">
+        </div>
+        <div class="field">
+          <label>Tenure (mo)</label>
+          <input type="number" id="tenure" placeholder="240" min="1">
+        </div>
+        <div class="field">
+          <label>Type</label>
+          <div class="select-wrap">
+            <select id="rateType">
+              <option value="floating">Floating</option>
+              <option value="fixed">Fixed</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Months Already Paid <span class="hint">0 if new</span></label>
+        <input type="number" id="monthsPaid" placeholder="0" min="0" value="0">
+      </div>
+
+      <!-- Live EMI indicator -->
+      <div class="live-emi" id="liveEMI">
+        <span class="emi-icon">📊</span>
+        <span class="emi-text" id="emiText">Enter loan details to see estimated EMI</span>
       </div>
     </div>
 
-    <!-- ─── STEP 6: PROPERTY (new intent only) ─── -->
-    <div class="wizard-step" id="step-6">
-      <div class="step-title-bar">
-        <div class="step-name">Property Details</div>
-        <div class="step-copy">Optional — used to check LTV compliance with RBI norms.</div>
-      </div>
-      <div class="step-body">
+    <!-- ══════════════════════════════ -->
+    <!-- STEP 6 — Property (NEW only)  -->
+    <!-- ══════════════════════════════ -->
+    <div class="step" id="step-6" data-step="6" data-intent-only="new">
+      <div class="step-section-title">Property Details</div>
+      <p class="step-microcopy">Optional — needed for LTV calculation on home loans.</p>
+
+      <div class="field-row">
         <div class="field">
           <label>Property Value (₹)</label>
           <div class="input-prefix"><span>₹</span>
@@ -250,36 +260,39 @@
             <input type="number" id="downPayment" placeholder="0" min="0" value="0">
           </div>
         </div>
-        <div class="live-hint" id="ltvHint"></div>
+      </div>
+
+      <!-- Live LTV indicator -->
+      <div class="live-ltv" id="liveLTV">
+        <span class="ltv-icon">🏷️</span>
+        <span class="ltv-text" id="ltvText">Enter property value to see LTV ratio</span>
       </div>
     </div>
 
-    <!-- ─── STEP 7: REVIEW ─── -->
-    <div class="wizard-step" id="step-7">
-      <div class="step-title-bar">
-        <div class="step-name">Review Your Profile</div>
-        <div class="step-copy">Confirm your inputs before running the full analysis.</div>
-      </div>
-      <div class="step-body">
-        <div id="reviewGrid" class="review-grid"></div>
-      </div>
+    <!-- ══════════════════════════════ -->
+    <!-- STEP 7 — Review               -->
+    <!-- ══════════════════════════════ -->
+    <div class="step" id="step-review" data-step="review">
+      <div class="step-section-title">Review Your Inputs</div>
+      <p class="step-microcopy">Double-check everything before we run the analysis.</p>
+      <div class="review-grid" id="reviewGrid"></div>
     </div>
 
-    <!-- Navigation -->
-    <div class="wizard-nav" id="wizardNav">
-      <button class="btn-back" id="btnBack">← Back</button>
+    <!-- Navigation buttons -->
+    <div class="step-nav" id="stepNav" style="display:none;">
+      <button class="btn-back" id="btnBack" style="display:none;">← Back</button>
       <button class="btn-next" id="btnNext">Next →</button>
     </div>
 
-    <!-- Hidden error + hidden original analyze button (keep for JS hook) -->
+    <!-- Hidden original analyze button (triggered programmatically) -->
     <div class="error-msg" id="errorMsg"></div>
-    <div style="display:none">
-      <button id="analyzeBtn" class="btn-analyze">Analyze</button>
+    <div class="cta-wrap" style="display:none;">
+      <button class="btn-analyze" id="analyzeBtn">▶ Analyze Loan Decision</button>
     </div>
   </div>
 
   <!-- ═══════════════════════════════════ -->
-  <!-- RESULTS PANEL (right side)         -->
+  <!-- RESULTS PANEL                      -->
   <!-- ═══════════════════════════════════ -->
   <div class="panel" id="resultsPanel">
     <div class="panel-header">
@@ -287,38 +300,39 @@
       <h2>Decision Report</h2>
     </div>
 
-    <!-- Score + verdict -->
+    <!-- 1. Score Block (existing) -->
     <div class="score-block" id="scoreBlock"></div>
+
+    <!-- 2. Decision Banner (existing) -->
     <div class="decision-banner" id="decisionBanner"></div>
 
-    <!-- ★ NEW: Core reason block -->
-    <div class="core-reason-block" id="coreReasonBlock"></div>
+    <!-- 3. Core Reason (NEW) -->
+    <div class="core-reason-block" id="coreReasonBlock" style="display:none;"></div>
 
-    <!-- Flags -->
+    <!-- 4. Worst Case Summary (NEW restructured view) -->
+    <div class="worst-case-block" id="worstCaseBlock" style="display:none;"></div>
+
+    <!-- 5. Time to Failure -->
+    <div class="ttf-block" id="ttfBlock" style="display:none;"></div>
+
+    <!-- 6. Decision Delta (NEW) -->
+    <div class="delta-block-new" id="deltaBlockNew" style="display:none;"></div>
+
+    <!-- 7. Flags (existing — keep as is) -->
     <div class="flags-block" id="flagsBlock" style="display:none"></div>
 
-    <!-- ★ NEW: Worst-case summary (impact-first) -->
-    <div class="worst-case-block" id="worstCaseBlock"></div>
-
-    <!-- ★ NEW: Decision delta -->
-    <div class="delta-block" id="deltaSummaryBlock"></div>
-
-    <!-- Impact grid (stressed state) -->
+    <!-- Impact (stressed state) -->
     <div class="impact-header" id="impactHeader"></div>
     <div class="impact-grid" id="impactGrid"></div>
 
-    <!-- ═══ COLLAPSIBLE: Detailed Analysis ═══ -->
-    <div class="collapsible-wrapper">
-      <button class="collapsible-toggle" id="detailToggle">
-        <span>View Detailed Analysis</span>
-        <span class="toggle-icon">▾</span>
-      </button>
-      <div class="collapsible-body" id="detailBody">
-
+    <!-- 8. Collapsible detailed analysis -->
+    <details class="detailed-analysis-toggle" id="detailedAnalysis">
+      <summary class="detail-toggle-btn">▸ View Detailed Analysis</summary>
+      <div class="detailed-analysis-content">
         <!-- Scenarios -->
         <div class="block" id="scenarioBlock"></div>
 
-        <!-- Analysis text -->
+        <!-- Analysis -->
         <div class="block">
           <div class="block-label">Stress Impact Analysis</div>
           <div class="analysis-text" id="analysisText"></div>
@@ -333,7 +347,7 @@
           <ul class="reco-list" id="recoList"></ul>
         </div>
 
-        <!-- Decision Delta (full) -->
+        <!-- Decision Delta (original) -->
         <div class="block" id="deltaBlock" style="display:none"></div>
 
         <!-- Prepayment -->
@@ -342,7 +356,7 @@
         <!-- Crossover -->
         <div class="block" id="crossoverBlock" style="display:none"></div>
 
-        <!-- Baseline reference -->
+        <!-- Baseline ref -->
         <div class="baseline-ref" id="baselineRef"></div>
 
         <!-- Eligibility -->
@@ -359,24 +373,22 @@
 
         <!-- Perspective -->
         <div class="block" id="perspectiveBlock" style="display:none"></div>
-
-      </div><!-- /collapsible-body -->
-    </div><!-- /collapsible-wrapper -->
-
+      </div>
+    </details>
   </div>
 
-  <!-- Placeholder (before first analysis) -->
+  <!-- Placeholder -->
   <div class="panel" id="placeholderPanel">
     <div class="panel-header">
       <span class="tag">02</span>
       <h2>Decision Report</h2>
     </div>
     <div class="placeholder-state">
-      <p>Complete your financial profile<br>to see the full decision report.</p>
+      <p>Fill in your financial profile and click<br>"Analyze Loan Decision".</p>
     </div>
   </div>
 
-</div><!-- /container -->
+</div>
 
 <!-- ═══════════════════════════════════ -->
 <!-- SCRIPTS (order matters)            -->
@@ -392,7 +404,9 @@
 <script src="js/verdict.js"></script>
 <script src="js/analysis.js"></script>
 <script src="js/renderer.js"></script>
-<script src="js/wizard.js"></script>
 <script src="js/main.js"></script>
+<!-- Step flow controller — MUST load after main.js -->
+<script src="js/stepflow.js"></script>
+
 </body>
 </html>
