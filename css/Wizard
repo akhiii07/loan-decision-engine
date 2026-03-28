@@ -1,0 +1,421 @@
+/* ═══════════════════════════════════════
+   WIZARD — Step flow, intent screen,
+   navigation, review, live hints,
+   collapsible, new result blocks
+═══════════════════════════════════════ */
+
+/* ── Wizard panel header ── */
+.wizard-header {
+  padding: 10px 14px 8px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.step-indicator {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.step-bar {
+  height: 2px;
+  background: var(--color-border);
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.step-bar-fill {
+  height: 100%;
+  background: var(--color-accent);
+  border-radius: 1px;
+  transition: width 0.3s ease;
+}
+
+/* ── Step visibility ── */
+.wizard-step { display: none; }
+.wizard-step.active { display: block; }
+
+/* ── Step title bar ── */
+.step-title-bar {
+  padding: 12px 14px 0;
+}
+
+.step-name {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 3px;
+}
+
+.step-copy {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-muted);
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+/* ── Step body ── */
+.step-body {
+  padding: 12px 14px 14px;
+}
+
+/* ── Intent screen ── */
+.intent-screen {
+  padding: 20px 14px 14px;
+}
+
+.intent-title {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 6px;
+}
+
+.intent-sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-muted);
+  margin-bottom: 18px;
+}
+
+.intent-btn {
+  width: 100%;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  text-align: left;
+  padding: 14px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.intent-btn:hover {
+  border-color: var(--color-accent);
+  background: rgba(240, 192, 64, 0.04);
+}
+
+.intent-btn:last-child { margin-bottom: 0; }
+
+.intent-icon {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.intent-btn-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 3px;
+}
+
+.intent-btn-sub {
+  font-size: 10px;
+  color: var(--color-muted);
+}
+
+/* ── Live hints ── */
+.live-hint {
+  margin-top: 10px;
+  padding: 8px 10px;
+  background: var(--color-surface-2);
+  border-left: 2px solid var(--color-border-2);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-muted);
+  line-height: 1.6;
+  min-height: 34px;
+}
+
+.live-hint.hint-ok   { border-color: var(--color-safe);    color: var(--color-safe); }
+.live-hint.hint-warn { border-color: var(--color-warning); color: var(--color-warning); }
+.live-hint.hint-bad  { border-color: var(--color-danger);  color: var(--color-danger); }
+
+/* ── Navigation ── */
+.wizard-nav {
+  padding: 12px 14px;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  gap: 8px;
+}
+
+.btn-back {
+  flex: 0 0 auto;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 9px 16px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.btn-back:hover {
+  border-color: var(--color-border-2);
+  color: var(--color-text);
+}
+
+.btn-next {
+  flex: 1;
+  background: var(--color-accent);
+  border: none;
+  color: #000;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 9px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: background 0.15s;
+}
+
+.btn-next:hover { background: var(--color-accent-2); }
+
+.btn-next.btn-analyze-final {
+  background: var(--color-safe);
+  color: #000;
+  letter-spacing: 0.08em;
+}
+
+.btn-next.btn-analyze-final:hover { background: #2dc987; }
+
+/* ── Review grid ── */
+.review-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.review-section {
+  margin-bottom: 10px;
+}
+
+.review-section-title {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  padding-bottom: 3px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.review-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.review-key {
+  color: var(--color-muted);
+  font-size: 10px;
+}
+
+.review-val {
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+/* ── Wizard header hidden on intent step ── */
+.wizard-header.hidden { display: none; }
+.wizard-nav.hidden { display: none; }
+
+/* ═══════════════════════════════════════
+   NEW RESULT BLOCKS
+═══════════════════════════════════════ */
+
+/* ── Core Reason block ── */
+.core-reason-block {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.core-reason-block:empty { display: none; }
+
+.core-reason-title {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.core-reason-item {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.6;
+  padding: 3px 0;
+}
+
+.core-reason-item.bad  { color: var(--color-danger); }
+.core-reason-item.warn { color: var(--color-warning); }
+.core-reason-item.ok   { color: var(--color-safe); }
+
+/* ── Worst case block ── */
+.worst-case-block {
+  border-bottom: 1px solid var(--color-border);
+  background: rgba(248,113,113,0.03);
+}
+
+.worst-case-block:empty { display: none; }
+
+.worst-case-header {
+  padding: 7px 14px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--color-danger);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.worst-case-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.wc-tile {
+  padding: 10px 10px;
+  border-right: 1px solid var(--color-border);
+}
+
+.wc-tile:last-child { border-right: none; }
+
+.wc-label {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
+.wc-value {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-danger);
+}
+
+.wc-value.ok   { color: var(--color-safe); }
+.wc-value.warn { color: var(--color-warning); }
+.wc-value.bad  { color: var(--color-danger); }
+
+.wc-sub {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--color-muted);
+  margin-top: 1px;
+}
+
+/* ── Delta summary block ── */
+.delta-block {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.delta-block:empty { display: none; }
+
+.delta-title {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  margin-bottom: 7px;
+}
+
+.delta-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--color-border);
+  gap: 8px;
+}
+
+.delta-item:last-child { border-bottom: none; }
+
+.delta-left { flex: 1; }
+
+.delta-type {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-accent);
+  margin-bottom: 2px;
+}
+
+.delta-value {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-text);
+}
+
+.delta-impact {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-safe);
+  text-align: right;
+  flex-shrink: 0;
+  max-width: 120px;
+}
+
+/* ── Collapsible wrapper ── */
+.collapsible-wrapper {
+  border-top: 1px solid var(--color-border);
+}
+
+.collapsible-toggle {
+  width: 100%;
+  background: var(--color-surface-2);
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 10px 14px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  transition: color 0.15s, background 0.15s;
+}
+
+.collapsible-toggle:hover {
+  color: var(--color-text);
+  background: var(--color-surface);
+}
+
+.toggle-icon {
+  transition: transform 0.2s;
+}
+
+.collapsible-toggle.open .toggle-icon {
+  transform: rotate(180deg);
+}
+
+.collapsible-body {
+  display: none;
+}
+
+.collapsible-body.open {
+  display: block;
+}
