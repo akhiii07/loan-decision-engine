@@ -145,6 +145,7 @@ function renderResults(ctx) {
   // Show results, hide placeholder
   el('placeholderPanel').style.display='none';
   el('resultsPanel').style.display='block';
+  document.querySelector('.container').classList.add('wide');
   if(window.innerWidth<=720)el('resultsPanel').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
