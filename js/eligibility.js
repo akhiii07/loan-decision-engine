@@ -28,7 +28,7 @@ function calculateLTV(loanAmount, propertyValue) {
   var maxLTV = 0.75; // default for > 75L
 
   for (var i = 0; i < CONFIG.LTV_SLABS.length; i++) {
-    if (loanAmount <= CONFIG.LTV_SLABS[i].maxLoan) {
+    if (propertyValue <= CONFIG.LTV_SLABS[i].maxLoan) {
       maxLTV = CONFIG.LTV_SLABS[i].maxLTV;
       break;
     }
