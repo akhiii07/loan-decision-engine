@@ -24,7 +24,7 @@
 <div class="container">
 
   <!-- ═══════════════════════════════════ -->
-  <!-- INPUT PANEL (now wrapped in steps) -->
+  <!-- INPUT PANEL                        -->
   <!-- ═══════════════════════════════════ -->
   <div class="panel" id="inputPanel">
     <div class="panel-header">
@@ -33,260 +33,248 @@
     </div>
 
     <!-- Step progress bar -->
-    <div class="step-progress" id="stepProgress"></div>
-    <div class="step-label" id="stepLabel"></div>
+    <div class="sf-progress" id="sfProgress"></div>
+    <div class="sf-label" id="sfLabel"></div>
 
-    <!-- ══════════════════════════════ -->
-    <!-- STEP 0 — Intent Screen (NEW) -->
-    <!-- ══════════════════════════════ -->
-    <div class="step active" id="step-0" data-step="0">
-      <div class="step-intro">
-        <h2 class="step-question">What do you want to check?</h2>
-        <p class="step-microcopy">Choose your goal — we'll tailor the flow accordingly.</p>
-        <div class="intent-buttons">
-          <button class="intent-btn" data-intent="new" id="intentNew">
-            <span class="intent-icon">🏠</span>
-            <span class="intent-title">Can I afford a home loan?</span>
-            <span class="intent-desc">Check eligibility, affordability & stress for a new loan</span>
+    <!-- ══════ STEP 0 — Intent Screen (NEW) ══════ -->
+    <div class="sf-step sf-active" id="sf-step-0">
+      <div class="sf-intro">
+        <h2 class="sf-question">What do you want to check?</h2>
+        <p class="sf-microcopy">Choose your goal — we'll tailor the flow accordingly.</p>
+        <div class="sf-intent-buttons">
+          <button type="button" class="sf-intent-btn" id="intentNew">
+            <span class="sf-intent-icon">🏠</span>
+            <span class="sf-intent-title">Can I afford a home loan?</span>
+            <span class="sf-intent-desc">Check eligibility, affordability &amp; stress for a new loan</span>
           </button>
-          <button class="intent-btn" data-intent="existing" id="intentExisting">
-            <span class="intent-icon">🛡️</span>
-            <span class="intent-title">Am I financially safe right now?</span>
-            <span class="intent-desc">Stress-test your current finances without a new loan</span>
+          <button type="button" class="sf-intent-btn" id="intentExisting">
+            <span class="sf-intent-icon">🛡️</span>
+            <span class="sf-intent-title">Am I financially safe right now?</span>
+            <span class="sf-intent-desc">Stress-test your current finances without a new loan</span>
           </button>
         </div>
       </div>
     </div>
 
-    <!-- ══════════════════════════════ -->
-    <!-- STEP 1 — Income              -->
-    <!-- ══════════════════════════════ -->
-    <div class="step" id="step-1" data-step="1">
-      <div class="step-section-title">Income Details</div>
-      <p class="step-microcopy">Your primary income drives all affordability checks.</p>
-
-      <div class="field">
-        <label>Net Monthly Income (₹)</label>
-        <div class="input-prefix"><span>₹</span>
-          <input type="number" id="income" placeholder="e.g. 80000" min="0">
-        </div>
-      </div>
-      <div class="field-row">
+    <!-- ══════ STEP 1 — Income ══════ -->
+    <div class="sf-step" id="sf-step-1">
+      <div class="form-section">
+        <div class="section-label">Income</div>
+        <p class="sf-microcopy">Your primary income drives all affordability checks.</p>
         <div class="field">
-          <label>Income Type</label>
-          <div class="select-wrap">
-            <select id="incomeType">
-              <option value="salaried">Salaried</option>
-              <option value="self-employed">Self-Employed</option>
-            </select>
+          <label>Net Monthly Income (₹)</label>
+          <div class="input-prefix"><span>₹</span>
+            <input type="number" id="income" placeholder="e.g. 80000" min="0">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Income Type</label>
+            <div class="select-wrap">
+              <select id="incomeType">
+                <option value="salaried">Salaried</option>
+                <option value="self-employed">Self-Employed</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>Income Shock %</label>
+            <input type="number" id="incomeShock" value="30" min="0" max="100">
+            <div class="shock-hint" id="shockHint">⚠ Min 40% for self-employed</div>
           </div>
         </div>
         <div class="field">
-          <label>Income Shock %</label>
-          <input type="number" id="incomeShock" value="30" min="0" max="100">
-          <div class="shock-hint" id="shockHint">⚠ Min 40% for self-employed</div>
-        </div>
-      </div>
-      <div class="field">
-        <label>Annual Bonus (₹) <span class="hint">optional</span></label>
-        <div class="input-prefix"><span>₹</span>
-          <input type="number" id="annualBonus" placeholder="0" min="0" value="0">
-        </div>
-      </div>
-    </div>
-
-    <!-- ══════════════════════════════ -->
-    <!-- STEP 2 — Existing EMIs        -->
-    <!-- ══════════════════════════════ -->
-    <div class="step" id="step-2" data-step="2">
-      <div class="step-section-title">Existing EMIs</div>
-      <p class="step-microcopy">Current loan obligations reduce your borrowing capacity.</p>
-
-      <div class="field">
-        <label>Secured EMIs (₹/mo) <span class="hint">home, auto</span></label>
-        <div class="input-prefix"><span>₹</span>
-          <input type="number" id="securedEMI" placeholder="0" min="0" value="0">
-        </div>
-      </div>
-      <div class="field">
-        <label>Unsecured EMIs (₹/mo) <span class="hint">personal, cards</span></label>
-        <div class="input-prefix"><span>₹</span>
-          <input type="number" id="unsecuredEMI" placeholder="0" min="0" value="0">
-        </div>
-      </div>
-    </div>
-
-    <!-- ══════════════════════════════ -->
-    <!-- STEP 3 — Expenses             -->
-    <!-- ══════════════════════════════ -->
-    <div class="step" id="step-3" data-step="3">
-      <div class="step-section-title">Monthly Expenses</div>
-      <p class="step-microcopy">Essential and lifestyle spending shapes your disposable income.</p>
-
-      <div class="field">
-        <label>Dependents <span class="hint">spouse, children, parents</span></label>
-        <input type="number" id="dependents" placeholder="e.g. 2" min="0" value="0">
-      </div>
-      <div class="field">
-        <label>Essential (₹) <span class="hint">rent, food, utilities</span></label>
-        <div class="input-prefix"><span>₹</span>
-          <input type="number" id="essentialExp" placeholder="e.g. 25000" min="0">
-        </div>
-      </div>
-      <div class="field-row">
-        <div class="field">
-          <label>Lifestyle (₹)</label>
+          <label>Annual Bonus (₹) <span class="hint">optional</span></label>
           <div class="input-prefix"><span>₹</span>
-            <input type="number" id="lifestyleExp" placeholder="0" min="0" value="0">
-          </div>
-        </div>
-        <div class="field">
-          <label>Semi-Fixed (₹) <span class="hint">school, family</span></label>
-          <div class="input-prefix"><span>₹</span>
-            <input type="number" id="semiFixedExp" placeholder="0" min="0" value="0">
+            <input type="number" id="annualBonus" placeholder="0" min="0" value="0">
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ══════════════════════════════ -->
-    <!-- STEP 4 — Savings              -->
-    <!-- ══════════════════════════════ -->
-    <div class="step" id="step-4" data-step="4">
-      <div class="step-section-title">Savings & Liquidity</div>
-      <p class="step-microcopy">Your financial cushion determines how long you survive a shock.</p>
-
-      <div class="field-row3">
-        <div class="field">
-          <label>Cash + Bank (₹) <span class="hint">instant</span></label>
-          <div class="input-prefix"><span>₹</span>
-            <input type="number" id="cashBalance" placeholder="100000" min="0" value="0">
+    <!-- ══════ STEP 2 — Existing EMIs ══════ -->
+    <div class="sf-step" id="sf-step-2">
+      <div class="form-section">
+        <div class="section-label">Existing EMIs</div>
+        <p class="sf-microcopy">Current loan obligations reduce your borrowing capacity.</p>
+        <div class="field-row">
+          <div class="field">
+            <label>Secured EMIs (₹/mo) <span class="hint">home, auto</span></label>
+            <div class="input-prefix"><span>₹</span>
+              <input type="number" id="securedEMI" placeholder="0" min="0" value="0">
+            </div>
+          </div>
+          <div class="field">
+            <label>Unsecured EMIs (₹/mo) <span class="hint">personal, cards</span></label>
+            <div class="input-prefix"><span>₹</span>
+              <input type="number" id="unsecuredEMI" placeholder="0" min="0" value="0">
+            </div>
           </div>
         </div>
-        <div class="field">
-          <label>Fixed Deposits (₹) <span class="hint">70% usable</span></label>
-          <div class="input-prefix"><span>₹</span>
-            <input type="number" id="fdBalance" placeholder="0" min="0" value="0">
-          </div>
-        </div>
-        <div class="field">
-          <label>Other Invest. (₹) <span class="hint">30% usable</span></label>
-          <div class="input-prefix"><span>₹</span>
-            <input type="number" id="otherSavings" placeholder="0" min="0" value="0">
-          </div>
-        </div>
-      </div>
-
-      <!-- Live survival indicator -->
-      <div class="live-survival" id="liveSurvival">
-        <span class="survival-icon">🛟</span>
-        <span class="survival-text" id="survivalText">Enter savings to see survival estimate</span>
       </div>
     </div>
 
-    <!-- ══════════════════════════════ -->
-    <!-- STEP 5 — Loan (NEW only)      -->
-    <!-- ══════════════════════════════ -->
-    <div class="step" id="step-5" data-step="5" data-intent-only="new">
-      <div class="step-section-title">New Loan Details</div>
-      <p class="step-microcopy">Tell us about the loan you're considering.</p>
-
-      <div class="field-row">
+    <!-- ══════ STEP 3 — Expenses ══════ -->
+    <div class="sf-step" id="sf-step-3">
+      <div class="form-section">
+        <div class="section-label">Monthly Expenses</div>
+        <p class="sf-microcopy">Essential and lifestyle spending shapes your disposable income.</p>
         <div class="field">
-          <label>New Loan Amount (₹)</label>
+          <label>Dependents <span class="hint">spouse, children, parents</span></label>
+          <input type="number" id="dependents" placeholder="e.g. 2" min="0" value="0">
+        </div>
+        <div class="field">
+          <label>Essential (₹) <span class="hint">rent, food, utilities</span></label>
           <div class="input-prefix"><span>₹</span>
-            <input type="number" id="loanAmount" placeholder="e.g. 5000000" min="0">
+            <input type="number" id="essentialExp" placeholder="e.g. 25000" min="0">
           </div>
         </div>
-        <div class="field">
-          <label>Loan Purpose</label>
-          <div class="select-wrap">
-            <select id="loanPurpose">
-              <option value="home">Home Loan</option>
-              <option value="auto">Auto Loan</option>
-              <option value="personal">Personal Loan</option>
-            </select>
+        <div class="field-row">
+          <div class="field">
+            <label>Lifestyle (₹)</label>
+            <div class="input-prefix"><span>₹</span>
+              <input type="number" id="lifestyleExp" placeholder="0" min="0" value="0">
+            </div>
+          </div>
+          <div class="field">
+            <label>Semi-Fixed (₹) <span class="hint">school, family</span></label>
+            <div class="input-prefix"><span>₹</span>
+              <input type="number" id="semiFixedExp" placeholder="0" min="0" value="0">
+            </div>
           </div>
         </div>
-      </div>
-      <div class="field-row3">
-        <div class="field">
-          <label>Rate (%)</label>
-          <input type="number" id="interestRate" placeholder="8.5" min="0" step="0.1">
-        </div>
-        <div class="field">
-          <label>Tenure (mo)</label>
-          <input type="number" id="tenure" placeholder="240" min="1">
-        </div>
-        <div class="field">
-          <label>Type</label>
-          <div class="select-wrap">
-            <select id="rateType">
-              <option value="floating">Floating</option>
-              <option value="fixed">Fixed</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <div class="field">
-        <label>Months Already Paid <span class="hint">0 if new</span></label>
-        <input type="number" id="monthsPaid" placeholder="0" min="0" value="0">
-      </div>
-
-      <!-- Live EMI indicator -->
-      <div class="live-emi" id="liveEMI">
-        <span class="emi-icon">📊</span>
-        <span class="emi-text" id="emiText">Enter loan details to see estimated EMI</span>
       </div>
     </div>
 
-    <!-- ══════════════════════════════ -->
-    <!-- STEP 6 — Property (NEW only)  -->
-    <!-- ══════════════════════════════ -->
-    <div class="step" id="step-6" data-step="6" data-intent-only="new">
-      <div class="step-section-title">Property Details</div>
-      <p class="step-microcopy">Optional — needed for LTV calculation on home loans.</p>
-
-      <div class="field-row">
-        <div class="field">
-          <label>Property Value (₹)</label>
-          <div class="input-prefix"><span>₹</span>
-            <input type="number" id="propertyValue" placeholder="0" min="0" value="0">
+    <!-- ══════ STEP 4 — Savings ══════ -->
+    <div class="sf-step" id="sf-step-4">
+      <div class="form-section">
+        <div class="section-label">Savings &amp; Liquidity</div>
+        <p class="sf-microcopy">Your financial cushion determines how long you survive a shock.</p>
+        <div class="field-row3">
+          <div class="field">
+            <label>Cash + Bank (₹) <span class="hint">instant</span></label>
+            <div class="input-prefix"><span>₹</span>
+              <input type="number" id="cashBalance" placeholder="100000" min="0" value="0">
+            </div>
+          </div>
+          <div class="field">
+            <label>Fixed Deposits (₹) <span class="hint">70% usable</span></label>
+            <div class="input-prefix"><span>₹</span>
+              <input type="number" id="fdBalance" placeholder="0" min="0" value="0">
+            </div>
+          </div>
+          <div class="field">
+            <label>Other Invest. (₹) <span class="hint">30% usable</span></label>
+            <div class="input-prefix"><span>₹</span>
+              <input type="number" id="otherSavings" placeholder="0" min="0" value="0">
+            </div>
           </div>
         </div>
-        <div class="field">
-          <label>Down Payment (₹)</label>
-          <div class="input-prefix"><span>₹</span>
-            <input type="number" id="downPayment" placeholder="0" min="0" value="0">
-          </div>
+        <div class="sf-live-indicator" id="liveSurvival">
+          <span class="sf-live-icon">🛟</span>
+          <span class="sf-live-text" id="survivalText">Enter savings to see survival estimate</span>
         </div>
-      </div>
-
-      <!-- Live LTV indicator -->
-      <div class="live-ltv" id="liveLTV">
-        <span class="ltv-icon">🏷️</span>
-        <span class="ltv-text" id="ltvText">Enter property value to see LTV ratio</span>
       </div>
     </div>
 
-    <!-- ══════════════════════════════ -->
-    <!-- STEP 7 — Review               -->
-    <!-- ══════════════════════════════ -->
-    <div class="step" id="step-review" data-step="review">
-      <div class="step-section-title">Review Your Inputs</div>
-      <p class="step-microcopy">Double-check everything before we run the analysis.</p>
-      <div class="review-grid" id="reviewGrid"></div>
+    <!-- ══════ STEP 5 — Loan (NEW intent only) ══════ -->
+    <div class="sf-step" id="sf-step-5">
+      <div class="form-section">
+        <div class="section-label">Loan</div>
+        <p class="sf-microcopy">Tell us about the loan you're considering.</p>
+        <div class="field-row">
+          <div class="field">
+            <label>New Loan Amount (₹)</label>
+            <div class="input-prefix"><span>₹</span>
+              <input type="number" id="loanAmount" placeholder="e.g. 5000000" min="0">
+            </div>
+          </div>
+          <div class="field">
+            <label>Loan Purpose</label>
+            <div class="select-wrap">
+              <select id="loanPurpose">
+                <option value="home">Home Loan</option>
+                <option value="auto">Auto Loan</option>
+                <option value="personal">Personal Loan</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="field-row3">
+          <div class="field">
+            <label>Rate (%)</label>
+            <input type="number" id="interestRate" placeholder="8.5" min="0" step="0.1">
+          </div>
+          <div class="field">
+            <label>Tenure (mo)</label>
+            <input type="number" id="tenure" placeholder="240" min="1">
+          </div>
+          <div class="field">
+            <label>Type</label>
+            <div class="select-wrap">
+              <select id="rateType">
+                <option value="floating">Floating</option>
+                <option value="fixed">Fixed</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Months Already Paid <span class="hint">0 if new</span></label>
+          <input type="number" id="monthsPaid" placeholder="0" min="0" value="0">
+        </div>
+        <div class="sf-live-indicator" id="liveEMI">
+          <span class="sf-live-icon">📊</span>
+          <span class="sf-live-text" id="emiText">Enter loan details to see estimated EMI</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════ STEP 6 — Property (NEW intent only) ══════ -->
+    <div class="sf-step" id="sf-step-6">
+      <div class="form-section">
+        <div class="section-label">Property (optional)</div>
+        <p class="sf-microcopy">Needed for LTV calculation on home loans.</p>
+        <div class="field-row">
+          <div class="field">
+            <label>Property Value (₹)</label>
+            <div class="input-prefix"><span>₹</span>
+              <input type="number" id="propertyValue" placeholder="0" min="0" value="0">
+            </div>
+          </div>
+          <div class="field">
+            <label>Down Payment (₹)</label>
+            <div class="input-prefix"><span>₹</span>
+              <input type="number" id="downPayment" placeholder="0" min="0" value="0">
+            </div>
+          </div>
+        </div>
+        <div class="sf-live-indicator" id="liveLTV">
+          <span class="sf-live-icon">🏷️</span>
+          <span class="sf-live-text" id="ltvText">Enter property value to see LTV ratio</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════ STEP 7 — Review ══════ -->
+    <div class="sf-step" id="sf-step-review">
+      <div class="form-section">
+        <div class="section-label">Review Your Inputs</div>
+        <p class="sf-microcopy">Double-check everything before we run the analysis.</p>
+        <div class="sf-review-grid" id="sfReviewGrid"></div>
+      </div>
     </div>
 
     <!-- Navigation buttons -->
-    <div class="step-nav" id="stepNav" style="display:none;">
-      <button class="btn-back" id="btnBack" style="display:none;">← Back</button>
-      <button class="btn-next" id="btnNext">Next →</button>
+    <div class="sf-nav" id="sfNav">
+      <button type="button" class="sf-btn-back" id="sfBtnBack">← Back</button>
+      <button type="button" class="sf-btn-next" id="sfBtnNext">Next →</button>
     </div>
 
-    <!-- Hidden original analyze button (triggered programmatically) -->
+    <!-- Hidden error + original analyze button -->
     <div class="error-msg" id="errorMsg"></div>
-    <div class="cta-wrap" style="display:none;">
+    <div class="cta-wrap" id="ctaWrap" style="display:none !important;">
       <button class="btn-analyze" id="analyzeBtn">▶ Analyze Loan Decision</button>
     </div>
   </div>
@@ -300,35 +288,36 @@
       <h2>Decision Report</h2>
     </div>
 
-    <!-- 1. Score Block (existing) -->
+    <!-- 1. Score (existing #scoreBlock) -->
     <div class="score-block" id="scoreBlock"></div>
 
-    <!-- 2. Decision Banner (existing) -->
+    <!-- 2. Decision (existing #decisionBanner) -->
     <div class="decision-banner" id="decisionBanner"></div>
 
     <!-- 3. Core Reason (NEW) -->
-    <div class="core-reason-block" id="coreReasonBlock" style="display:none;"></div>
+    <div class="sf-core-reason" id="sfCoreReason" style="display:none;"></div>
 
-    <!-- 4. Worst Case Summary (NEW restructured view) -->
-    <div class="worst-case-block" id="worstCaseBlock" style="display:none;"></div>
+    <!-- 4. Worst Case (NEW) -->
+    <div class="sf-worst-case" id="sfWorstCase" style="display:none;"></div>
 
-    <!-- 5. Time to Failure -->
-    <div class="ttf-block" id="ttfBlock" style="display:none;"></div>
+    <!-- 5. Time to Failure (NEW) -->
+    <div class="sf-ttf" id="sfTTF" style="display:none;"></div>
 
     <!-- 6. Decision Delta (NEW) -->
-    <div class="delta-block-new" id="deltaBlockNew" style="display:none;"></div>
+    <div class="sf-delta" id="sfDelta" style="display:none;"></div>
 
-    <!-- 7. Flags (existing — keep as is) -->
+    <!-- 7. Flags (existing — KEEP AS IS) -->
     <div class="flags-block" id="flagsBlock" style="display:none"></div>
 
     <!-- Impact (stressed state) -->
     <div class="impact-header" id="impactHeader"></div>
     <div class="impact-grid" id="impactGrid"></div>
 
-    <!-- 8. Collapsible detailed analysis -->
-    <details class="detailed-analysis-toggle" id="detailedAnalysis">
-      <summary class="detail-toggle-btn">▸ View Detailed Analysis</summary>
-      <div class="detailed-analysis-content">
+    <!-- 8. Collapsible detailed analysis wrapper -->
+    <details class="sf-details-toggle" id="sfDetailsToggle">
+      <summary class="sf-details-summary">▸ View Detailed Analysis</summary>
+      <div class="sf-details-content">
+
         <!-- Scenarios -->
         <div class="block" id="scenarioBlock"></div>
 
@@ -373,6 +362,7 @@
 
         <!-- Perspective -->
         <div class="block" id="perspectiveBlock" style="display:none"></div>
+
       </div>
     </details>
   </div>
@@ -405,7 +395,7 @@
 <script src="js/analysis.js"></script>
 <script src="js/renderer.js"></script>
 <script src="js/main.js"></script>
-<!-- Step flow controller — MUST load after main.js -->
+<!-- Step flow controller — loads AFTER all engine scripts -->
 <script src="js/stepflow.js"></script>
 
 </body>
