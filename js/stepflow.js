@@ -339,6 +339,7 @@
       { l: "Annual Bonus", v: fmtINR($("annualBonus") && $("annualBonus").value) },
       { l: "Secured EMIs", v: fmtINR($("securedEMI") && $("securedEMI").value) },
       { l: "Unsecured EMIs", v: fmtINR($("unsecuredEMI") && $("unsecuredEMI").value) },
+      { l: "Pending Tenure (existing)", v: (($("existingTenure") && $("existingTenure").value) || "0") + " months" },
       { l: "Dependents", v: ($("dependents") && $("dependents").value) || "0" },
       { l: "Essential Expenses", v: fmtINR($("essentialExp") && $("essentialExp").value) },
       { l: "Lifestyle", v: fmtINR($("lifestyleExp") && $("lifestyleExp").value) },

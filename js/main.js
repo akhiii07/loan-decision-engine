@@ -49,10 +49,12 @@ el('analyzeBtn').addEventListener('click', function() {
     var rawOther = readInput('otherSavings');
 
     // ── VALIDATE ──
-    if (income <= 0)     return showError('⚠ Income must be > 0.');
-    if (loanAmount <= 0) return showError('⚠ Enter loan amount.');
-    if (rate <= 0)       return showError('⚠ Enter interest rate.');
-    if (tenure <= 0)     return showError('⚠ Enter tenure.');
+    if (income <= 0) return showError('⚠ Income must be > 0.');
+    // Loan fields are only required when a new loan is being evaluated
+    if (loanAmount > 0) {
+      if (rate <= 0)   return showError('⚠ Enter interest rate.');
+      if (tenure <= 0) return showError('⚠ Enter tenure.');
+    }
 
     function showError(msg) {
       errEl.textContent = msg;

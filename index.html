@@ -96,7 +96,7 @@
     <div class="sf-step" id="sf-step-2">
       <div class="form-section">
         <div class="section-label">Existing EMIs</div>
-        <p class="sf-microcopy">Current loan obligations reduce your borrowing capacity.</p>
+        <p class="sf-microcopy">Enter your current ongoing loan EMIs and their pending tenure.</p>
         <div class="field-row">
           <div class="field">
             <label>Secured EMIs (₹/mo) <span class="hint">home, auto</span></label>
@@ -110,6 +110,10 @@
               <input type="number" id="unsecuredEMI" placeholder="0" min="0" value="0">
             </div>
           </div>
+        </div>
+        <div class="field">
+          <label>Pending Tenure (months) <span class="hint">avg months remaining on existing loans · optional</span></label>
+          <input type="number" id="existingTenure" placeholder="e.g. 36" min="0" value="0">
         </div>
       </div>
     </div>
