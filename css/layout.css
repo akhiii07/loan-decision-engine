@@ -71,6 +71,12 @@ header p {
   padding: 20px 24px;
 }
 
+.container.results-full {
+  max-width: 92vw;
+  grid-template-columns: 1fr;
+  padding: 20px 24px;
+}
+
 @media (max-width: 720px) {
   .container,
   .container.wide {

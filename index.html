@@ -292,93 +292,59 @@
       <h2>Decision Report</h2>
     </div>
 
-    <!-- 1. Score (existing #scoreBlock) -->
-    <div class="score-block" id="scoreBlock"></div>
+    <!-- 1. SCORE — centered hero -->
+    <div class="rp-score-section" id="scoreBlock"></div>
 
-    <!-- 2. Decision (existing #decisionBanner) -->
-    <div class="decision-banner" id="decisionBanner"></div>
-
-    <!-- 3. Core Reason (NEW) -->
-    <div class="sf-core-reason" id="sfCoreReason" style="display:none;"></div>
-
-    <!-- 4. Worst Case (NEW) -->
-    <div class="sf-worst-case" id="sfWorstCase" style="display:none;"></div>
-
-    <!-- 5. Time to Failure (NEW) -->
-    <div class="sf-ttf" id="sfTTF" style="display:none;"></div>
-
-    <!-- 6. Decision Delta (NEW) -->
-    <div class="sf-delta" id="sfDelta" style="display:none;"></div>
-
-    <!-- 7. Flags (existing — KEEP AS IS) -->
+    <!-- 2. RISK FLAGS -->
     <div class="flags-block" id="flagsBlock" style="display:none"></div>
 
-    <!--
-      ═══════════════════════════════════════════════════
-      ALL original renderer.js target elements kept here
-      in their original order so renderer.js never hits null.
-      Some are duplicated above (sfCoreReason etc.) for the
-      new UI, but these are the ORIGINALS the engine writes to.
-      ═══════════════════════════════════════════════════
-    -->
-
-    <!-- Core Reason (original renderer target) -->
-    <div class="block" id="coreReasonBlock" style="display:none"></div>
-
-    <!-- Impact (stressed state) -->
-    <div class="impact-header" id="impactHeader"></div>
-    <div class="impact-grid" id="impactGrid"></div>
-
-    <!-- Scenarios -->
-    <div class="block" id="scenarioBlock"></div>
-
-    <!-- Analysis -->
-    <div class="block">
-      <div class="block-label">Stress Impact Analysis</div>
-      <div class="analysis-text" id="analysisText"></div>
+    <!-- 3. WORST-CASE — large metric boxes -->
+    <div class="rp-worst-case-wrap">
+      <div class="rp-section-hdr" id="impactHeader"></div>
+      <div class="impact-grid" id="impactGrid"></div>
     </div>
 
-    <!-- Recovery -->
-    <div class="recovery-block" id="recoveryBlock" style="display:none"></div>
-
-    <!-- Recommendations -->
-    <div class="block">
-      <div class="block-label">How to Prevent / Mitigate</div>
-      <ul class="reco-list" id="recoList"></ul>
+    <!-- 4. SPLIT ROW: Stress Scenarios (left) | What To Change (right) -->
+    <div class="rp-split-row">
+      <div class="rp-col-left">
+        <div class="rp-col-hdr">Impact Analysis</div>
+        <div class="block" id="scenarioBlock"></div>
+        <div class="recovery-block" id="recoveryBlock" style="display:none"></div>
+        <div class="block" id="coreReasonBlock" style="display:none"></div>
+      </div>
+      <div class="rp-col-right">
+        <div class="rp-col-hdr">What Should You Change?</div>
+        <div class="block" id="deltaBlock" style="display:none"></div>
+        <div class="block"><ul class="reco-list" id="recoList"></ul></div>
+        <div class="block" id="eligBlock"></div>
+        <div class="baseline-ref" id="baselineRef"></div>
+      </div>
     </div>
 
-    <!-- Decision Delta (original) -->
-    <div class="block" id="deltaBlock" style="display:none"></div>
+    <!-- 5. INFLATION CROSSOVER — SVG graph -->
+    <div class="rp-graph-block" id="crossoverBlock"></div>
 
-    <!-- Prepayment -->
+    <!-- 6. EMI BURDEN OVER TIME — SVG graph -->
+    <div class="rp-graph-block" id="trendBlock" style="display:none"></div>
+
+    <!-- Hidden: analysis text (read by stepflow.js for injections) -->
+    <div id="analysisText" style="display:none"></div>
+
+    <!-- Hidden: renderer targets not shown in new layout -->
+    <div class="decision-banner" id="decisionBanner" style="display:none"></div>
     <div class="block" id="prepayBlock" style="display:none"></div>
-
-    <!-- Crossover -->
-    <div class="block" id="crossoverBlock" style="display:none"></div>
-
-    <!-- Baseline ref -->
-    <div class="baseline-ref" id="baselineRef"></div>
-
-    <!-- Eligibility -->
-    <div class="block" id="eligBlock"></div>
-
-    <!-- EMI Trend -->
-    <div class="block" id="trendBlock" style="display:none"></div>
-
-    <!-- Breakpoints -->
-    <div class="block">
-      <div class="block-label">Critical Thresholds</div>
-      <div id="breakpointRows"></div>
-    </div>
-
-    <!-- Perspective -->
     <div class="block" id="perspectiveBlock" style="display:none"></div>
+    <div id="breakpointRows" style="display:none"></div>
+    <div id="worstCaseBlock" style="display:none"></div>
+    <div id="deltaSummaryBlock" style="display:none"></div>
 
-    <!--
-      Shorthand ID aliases — renderer.js may use abbreviated IDs
-      from the spec doc (scB, dB, fB, impG, eT, crB, scnB, bpR, psyB).
-      Adding hidden divs so renderer.js never gets null.
-    -->
+    <!-- Hidden: stepflow injection targets -->
+    <div class="sf-core-reason" id="sfCoreReason" style="display:none"></div>
+    <div class="sf-worst-case" id="sfWorstCase" style="display:none"></div>
+    <div class="sf-ttf" id="sfTTF" style="display:none"></div>
+    <div class="sf-delta" id="sfDelta" style="display:none"></div>
+
+    <!-- Hidden: shorthand aliases -->
     <div id="scB" style="display:none"></div>
     <div id="dB" style="display:none"></div>
     <div id="fB" style="display:none"></div>
@@ -388,14 +354,6 @@
     <div id="scnB" style="display:none"></div>
     <div id="bpR" style="display:none"></div>
     <div id="psyB" style="display:none"></div>
-
-    <!-- 8. Collapsible "View Detailed Analysis" wrapper -->
-    <details class="sf-details-toggle" id="sfDetailsToggle">
-      <summary class="sf-details-summary">▸ View Detailed Analysis</summary>
-      <div class="sf-details-content">
-        <p class="sf-microcopy">Expand for full scenario breakdown, eligibility details, critical thresholds, and baseline reference data.</p>
-      </div>
-    </details>
   </div>
 
   <!-- Placeholder -->

@@ -16,14 +16,14 @@ function renderResults(ctx) {
   var realSurv=ctx.realisticSurvival, theoSurv=ctx.theoreticalSurvival;
   var vC=verdictColor(verdict);
 
-  // ═══ SCORE ═══
+  // ═══ SCORE — centered hero ═══
   el('scoreBlock').innerHTML=
-    '<div class="score-ring v-'+verdict+'">'+score+'</div>'
-    +'<div class="score-details"><div class="score-label">Decision Score</div>'
-    +'<div class="score-verdict" style="color:var(--color-'+vC+')">'+verdict+'</div>'
-    +'<div class="score-sub">'+decSt+'</div></div>';
+    '<div class="score-hero-label">Decision Score</div>'
+    +'<div class="score-hero-ring v-'+verdict+'">'+score+'</div>'
+    +'<div class="score-hero-verdict" style="color:var(--color-'+vC+')">'+verdict+'</div>'
+    +'<div class="score-hero-sub">'+decSt+'</div>';
 
-  // ═══ BANNER ═══
+  // ═══ BANNER (hidden in new layout — kept for compat) ═══
   var ban=el('decisionBanner');
   ban.className='decision-banner '+verdict.toLowerCase();
   ban.textContent=verdictText(verdict);
@@ -96,14 +96,12 @@ function renderResults(ctx) {
     else pB.style.display='none'}
   else pB.style.display='none'}
 
-  // ═══ CROSSOVER TABLE ═══
+  // ═══ CROSSOVER — SVG graph ═══
   var cB=el('crossoverBlock');
-  var sY=[0,1,3,5,10,Math.ceil(inp.tenure/12)];
-  sY=sY.filter(function(y,i,a){return y<=cross.years&&a.indexOf(y)===i}).sort(function(a,b){return a-b});
-  var tb='<div class="block-label">Inflation Crossover</div><div style="font-size:10px;color:var(--color-muted);margin-bottom:4px;font-family:var(--font-mono)">Income: 7→5→3%/yr · Expenses: 6%</div><div style="overflow-x:auto"><table class="crossover-table"><thead><tr><th>Yr</th><th>Income</th><th>Outflow</th><th>Net</th><th>EMI%</th></tr></thead><tbody>';
-  for(var i=0;i<sY.length;i++){var rw=cross.table[sY[i]];if(!rw)continue;var nc=rw.net>=0?(rw.net<20000?'cell-warn':'cell-ok'):'cell-bad';
-  tb+='<tr><td>'+rw.year+'</td><td>'+formatRupees(rw.income)+'</td><td>'+formatRupees(rw.outflow)+'</td><td class="'+nc+'">'+formatRupees(rw.net)+'</td><td>'+formatPct(rw.emiRatio)+'</td></tr>'}
-  tb+='</tbody></table></div>';cB.innerHTML=tb;cB.style.display='block';
+  cB.innerHTML='<div class="rp-graph-title">Inflation Crossover</div>'
+    +'<div class="rp-graph-sub">Income: 7%→5%→3%/yr growth &nbsp;·&nbsp; Expenses: 6%/yr &nbsp;·&nbsp; EMI held constant</div>'
+    +buildCrossoverSVG(cross);
+  cB.style.display='block';
 
   // ═══ BASELINE REFERENCE ═══
   el('baselineRef').innerHTML='<div class="ref-label">Current state (before stress)</div><div class="baseline-grid"><div class="bg-item">EMI: <strong>'+formatPct(base.emiRatio)+'</strong></div><div class="bg-item">Residual: <strong>'+formatRupees(base.residual)+'</strong></div><div class="bg-item">Buffer: <strong>'+(isFinite(base.buffer)?base.buffer.toFixed(1):'∞')+'mo</strong></div><div class="bg-item">Net: <strong>'+formatRupees(base.net)+'</strong></div></div>';
@@ -118,11 +116,13 @@ function renderResults(ctx) {
   eH+='<br>Usable savings: <strong>'+formatRupees(inp.savings)+'</strong>'+(ctx.totalRawSavings>inp.savings*1.3?' (from '+formatRupees(ctx.totalRawSavings)+' — liquidity adjusted)':'');
   eH+='</div>';el('eligBlock').innerHTML=eH;
 
-  // ═══ EMI TREND ═══
-  if(trend.length>0){var tH='<div class="block-label">EMI Burden Over Time</div><div style="display:flex;gap:10px;flex-wrap:wrap">';
-  trend.forEach(function(p){var c=emiColor(p.ratio,inp.incomeType);tH+='<div style="font-family:var(--font-mono);font-size:10px;padding:4px 8px;background:var(--color-surface-2);border:1px solid var(--color-border)"><span style="color:var(--color-muted)">Yr '+p.year+':</span> <span style="font-weight:600;color:var(--color-'+(c==='ok'?'safe':c==='warn'?'warning':'danger')+')">'+formatPct(p.ratio)+'</span></div>'});
-  tH+='</div>';el('trendBlock').innerHTML=tH;el('trendBlock').style.display='block'}
-  else el('trendBlock').style.display='none';
+  // ═══ EMI TREND — SVG bar chart ═══
+  if(trend.length>0){
+    el('trendBlock').innerHTML='<div class="rp-graph-title">EMI Burden Over Time</div>'
+      +'<div class="rp-graph-sub">How EMI burden eases as income grows over the loan tenure</div>'
+      +buildTrendSVG(trend,inp.incomeType);
+    el('trendBlock').style.display='block';
+  } else el('trendBlock').style.display='none';
 
   // ═══ BREAKPOINTS ═══
   var bp=[];
@@ -142,11 +142,14 @@ function renderResults(ctx) {
   if(pp&&pp.savedMonths>12)ps+='<br>Prepayment saves <strong style="color:var(--color-safe)">'+pp.savedYears+' yrs, '+formatLakh(pp.savedInterest)+'</strong>.';
   ps+='</div>';el('perspectiveBlock').innerHTML=ps;el('perspectiveBlock').style.display='block';
 
-  // Show results, hide placeholder
+  // Show results full-width, hide input panel and placeholder
   el('placeholderPanel').style.display='none';
+  el('inputPanel').style.display='none';
   el('resultsPanel').style.display='block';
-  document.querySelector('.container').classList.add('wide');
-  if(window.innerWidth<=720)el('resultsPanel').scrollIntoView({behavior:'smooth',block:'start'});
+  var cont=document.querySelector('.container');
+  cont.classList.remove('wide');
+  cont.classList.add('results-full');
+  el('resultsPanel').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 /** Build flags array */
@@ -300,6 +303,121 @@ function renderWorstCase(ctx) {
 
   html += '</div>';
   block.innerHTML = html;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SVG GRAPH BUILDERS
+   ═══════════════════════════════════════════════════════ */
+
+function buildCrossoverSVG(cross) {
+  var data = cross.table;
+  if (!data || data.length === 0) return '';
+  var W=820, H=250, pL=72, pR=24, pT=32, pB=44;
+  var plotW=W-pL-pR, plotH=H-pT-pB;
+  var maxVal=0;
+  data.forEach(function(r){ if(r.income>maxVal) maxVal=r.income; if(r.outflow>maxVal) maxVal=r.outflow; });
+  maxVal=Math.ceil(maxVal/50000)*50000;
+  var maxYr=data[data.length-1].year;
+  if(maxYr===0) return '';
+  function xS(y){ return pL+(y/maxYr)*plotW; }
+  function yS(v){ return pT+plotH-(v/maxVal)*plotH; }
+
+  var svg='<svg width="100%" viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="display:block;margin-top:8px">';
+
+  // Gridlines + Y labels
+  for(var gi=0;gi<=4;gi++){
+    var gv=(maxVal/4)*gi, gy=yS(gv).toFixed(1);
+    svg+='<line x1="'+pL+'" y1="'+gy+'" x2="'+(W-pR)+'" y2="'+gy+'" stroke="#2a2d31" stroke-width="1"/>';
+    svg+='<text x="'+(pL-8)+'" y="'+(parseFloat(gy)+4)+'" text-anchor="end" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono,monospace">'+formatLakh(gv)+'</text>';
+  }
+
+  // X ticks
+  data.forEach(function(r){
+    if(r.year===0||r.year%5===0){
+      var gx=xS(r.year).toFixed(1);
+      svg+='<line x1="'+gx+'" y1="'+pT+'" x2="'+gx+'" y2="'+(H-pB)+'" stroke="#2a2d31" stroke-width="1" stroke-dasharray="2,5"/>';
+      svg+='<text x="'+gx+'" y="'+(H-pB+16)+'" text-anchor="middle" fill="#7a7f87" font-size="10" font-family="IBM Plex Mono,monospace">Yr '+r.year+'</text>';
+    }
+  });
+
+  // Income area fill
+  var area='M'+xS(data[0].year).toFixed(1)+','+(H-pB);
+  data.forEach(function(r){ area+=' L'+xS(r.year).toFixed(1)+','+yS(r.income).toFixed(1); });
+  area+=' L'+xS(data[data.length-1].year).toFixed(1)+','+(H-pB)+' Z';
+  svg+='<path d="'+area+'" fill="#34d399" opacity="0.06"/>';
+
+  // Outflow line
+  var od=data.map(function(r,i){ return(i===0?'M':'L')+xS(r.year).toFixed(1)+','+yS(r.outflow).toFixed(1); }).join(' ');
+  svg+='<path d="'+od+'" fill="none" stroke="#fb923c" stroke-width="2.5" stroke-linejoin="round"/>';
+
+  // Income line
+  var id2=data.map(function(r,i){ return(i===0?'M':'L')+xS(r.year).toFixed(1)+','+yS(r.income).toFixed(1); }).join(' ');
+  svg+='<path d="'+id2+'" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linejoin="round"/>';
+
+  // Crossover marker
+  if(cross.crossoverYear!==null&&cross.crossoverYear!==undefined){
+    var cx=xS(cross.crossoverYear).toFixed(1);
+    var cy=yS(cross.table[cross.crossoverYear]?cross.table[cross.crossoverYear].income:0).toFixed(1);
+    svg+='<line x1="'+cx+'" y1="'+pT+'" x2="'+cx+'" y2="'+(H-pB)+'" stroke="#f87171" stroke-width="1.5" stroke-dasharray="5,3"/>';
+    svg+='<circle cx="'+cx+'" cy="'+cy+'" r="5" fill="#f87171"/>';
+    svg+='<text x="'+(parseFloat(cx)+8)+'" y="'+(pT+14)+'" fill="#f87171" font-size="10" font-family="IBM Plex Mono,monospace">Crossover Yr '+cross.crossoverYear+'</text>';
+  }
+
+  // Data dots at key years
+  data.forEach(function(r){
+    if(r.year%5===0||r.year===0){
+      svg+='<circle cx="'+xS(r.year).toFixed(1)+'" cy="'+yS(r.income).toFixed(1)+'" r="3.5" fill="#34d399" stroke="#141618" stroke-width="1.5"/>';
+      svg+='<circle cx="'+xS(r.year).toFixed(1)+'" cy="'+yS(r.outflow).toFixed(1)+'" r="3.5" fill="#fb923c" stroke="#141618" stroke-width="1.5"/>';
+    }
+  });
+
+  // Legend
+  var lx=W-140, ly=pT+4;
+  svg+='<rect x="'+lx+'" y="'+ly+'" width="12" height="3" fill="#34d399" rx="1"/>';
+  svg+='<text x="'+(lx+16)+'" y="'+(ly+5)+'" fill="#9ca3af" font-size="10" font-family="IBM Plex Mono,monospace">Income</text>';
+  svg+='<rect x="'+lx+'" y="'+(ly+16)+'" width="12" height="3" fill="#fb923c" rx="1"/>';
+  svg+='<text x="'+(lx+16)+'" y="'+(ly+21)+'" fill="#9ca3af" font-size="10" font-family="IBM Plex Mono,monospace">Outflow</text>';
+
+  svg+='</svg>';
+  return svg;
+}
+
+function buildTrendSVG(trend, incomeType) {
+  if(!trend||trend.length===0) return '';
+  var th=getThresholds(incomeType);
+  var W=700, barH=38, barGap=10, pL=52, pR=90, pT=40, pB=12;
+  var H=pT+trend.length*(barH+barGap)-barGap+pB;
+  var plotW=W-pL-pR;
+  var maxR=Math.max(th.risky+0.12, (trend[0]?trend[0].ratio:0.6)+0.08);
+  function xS(r){ return pL+(r/maxR)*plotW; }
+
+  var svg='<svg width="100%" viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="display:block;margin-top:8px">';
+
+  // Background zones
+  svg+='<rect x="'+pL+'" y="0" width="'+(xS(th.green)-pL).toFixed(1)+'" height="'+H+'" fill="#34d399" opacity="0.05"/>';
+  svg+='<rect x="'+xS(th.green).toFixed(1)+'" y="0" width="'+(xS(th.warn)-xS(th.green)).toFixed(1)+'" height="'+H+'" fill="#fbbf24" opacity="0.05"/>';
+  svg+='<rect x="'+xS(th.warn).toFixed(1)+'" y="0" width="'+(xS(th.risky)-xS(th.warn)).toFixed(1)+'" height="'+H+'" fill="#f87171" opacity="0.05"/>';
+
+  // Threshold lines + top labels
+  [[th.green,'#34d399','Safe'],[th.warn,'#fbbf24','Warn'],[th.risky,'#f87171','Risky']].forEach(function(t){
+    var tx=xS(t[0]).toFixed(1);
+    svg+='<line x1="'+tx+'" y1="0" x2="'+tx+'" y2="'+H+'" stroke="'+t[1]+'" stroke-width="1" opacity="0.4"/>';
+    svg+='<text x="'+tx+'" y="18" text-anchor="middle" fill="'+t[1]+'" font-size="9" font-family="IBM Plex Mono,monospace" opacity="0.8">'+t[2]+' '+formatPct(t[0])+'</text>';
+  });
+
+  // Bars
+  trend.forEach(function(p,i){
+    var y=pT+i*(barH+barGap);
+    var bw=Math.max(0,Math.min(xS(p.ratio)-pL,plotW));
+    var col=p.ratio<=th.green?'#34d399':p.ratio<=th.warn?'#fbbf24':'#f87171';
+    svg+='<text x="'+(pL-6)+'" y="'+(y+barH/2+5)+'" text-anchor="end" fill="#7a7f87" font-size="11" font-family="IBM Plex Mono,monospace">Yr '+p.year+'</text>';
+    svg+='<rect x="'+pL+'" y="'+y+'" width="'+plotW+'" height="'+barH+'" fill="'+col+'" opacity="0.07" rx="3"/>';
+    svg+='<rect x="'+pL+'" y="'+y+'" width="'+bw.toFixed(1)+'" height="'+barH+'" fill="'+col+'" opacity="0.75" rx="3"/>';
+    svg+='<text x="'+(pL+bw+8)+'" y="'+(y+barH/2+5)+'" fill="'+col+'" font-size="13" font-weight="600" font-family="IBM Plex Mono,monospace">'+formatPct(p.ratio)+'</text>';
+  });
+
+  svg+='</svg>';
+  return svg;
 }
 
 /**

@@ -321,6 +321,167 @@
   font-weight: 500;
 }
 
+/* ═══════════════════════════════════════
+   RESULTS PANEL — New layout classes
+═══════════════════════════════════════ */
+
+/* Score hero — centered at top */
+.rp-score-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px 32px;
+  border-bottom: 1px solid var(--color-border);
+  text-align: center;
+}
+
+.score-hero-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.score-hero-ring {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 38px;
+  font-weight: 700;
+  border: 4px solid;
+  margin-bottom: 14px;
+}
+
+.score-hero-ring.v-SAFE      { border-color: var(--color-safe);     color: var(--color-safe); }
+.score-hero-ring.v-MODERATE  { border-color: var(--color-moderate); color: var(--color-moderate); }
+.score-hero-ring.v-RISKY     { border-color: var(--color-warning);  color: var(--color-warning); }
+.score-hero-ring.v-DANGEROUS { border-color: var(--color-danger);   color: var(--color-danger); }
+
+.score-hero-verdict {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.score-hero-sub {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-muted);
+  max-width: 520px;
+  line-height: 1.6;
+}
+
+/* Flags row */
+.flags-block {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Worst-case wrap — impact dashboard */
+.rp-worst-case-wrap {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.rp-section-hdr {
+  padding: 10px 20px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--color-danger);
+  text-transform: uppercase;
+  background: rgba(248,113,113,0.04);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Override impact-grid tiles to be bigger inside worst-case wrap */
+.rp-worst-case-wrap .impact-grid {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.rp-worst-case-wrap .impact-tile {
+  padding: 20px 18px;
+}
+
+.rp-worst-case-wrap .impact-tile .tile-label {
+  font-size: 10px;
+  margin-bottom: 6px;
+}
+
+.rp-worst-case-wrap .impact-tile .tile-value {
+  font-size: 26px;
+  margin-bottom: 4px;
+}
+
+.rp-worst-case-wrap .impact-tile .tile-change {
+  font-size: 11px;
+}
+
+/* Split row — Impact left | Change right */
+.rp-split-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.rp-col-left {
+  border-right: 1px solid var(--color-border);
+}
+
+.rp-col-hdr {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface-2);
+}
+
+/* Graph blocks */
+.rp-graph-block {
+  padding: 24px 24px 20px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.rp-graph-title {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--color-text);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.rp-graph-sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-muted);
+  margin-bottom: 16px;
+}
+
+/* SVG graph responsive wrapper */
+.rp-graph-block svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
 /* Crossover table */
 .crossover-table {
   width: 100%;
