@@ -205,22 +205,27 @@
     // For "existing" intent → zero out loan fields so engine runs without new loan
     if (userIntent === "existing") {
       setVal("loanAmount", "0");
-      if (!$("interestRate").value) setVal("interestRate", "8.5");
-      if (!$("tenure").value) setVal("tenure", "240");
+      if (!$("interestRate") || !$("interestRate").value) setVal("interestRate", "8.5");
+      if (!$("tenure") || !$("tenure").value) setVal("tenure", "240");
       setVal("propertyValue", "0");
       setVal("downPayment", "0");
     }
 
-    // Click the original hidden analyze button
-    if (analyzeBtn) analyzeBtn.click();
+    // Click the original hidden analyze button inside try/catch
+    // so renderer.js errors don't break the step flow
+    try {
+      if (analyzeBtn) analyzeBtn.click();
+    } catch (e) {
+      console.warn("[stepflow] analyzeBtn.click() threw:", e);
+    }
 
-    // After a short delay (let renderer.js finish), inject new output sections
+    // After a delay (let renderer.js finish), inject new output sections
     setTimeout(function () {
-      injectCoreReason();
-      injectWorstCase();
-      injectTTF();
-      injectDelta();
-    }, 200);
+      try { injectCoreReason(); } catch (e) { console.warn("[stepflow] injectCoreReason:", e); }
+      try { injectWorstCase(); } catch (e) { console.warn("[stepflow] injectWorstCase:", e); }
+      try { injectTTF(); } catch (e) { console.warn("[stepflow] injectTTF:", e); }
+      try { injectDelta(); } catch (e) { console.warn("[stepflow] injectDelta:", e); }
+    }, 300);
   }
 
   function setVal(id, val) {
