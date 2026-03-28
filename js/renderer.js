@@ -204,3 +204,123 @@ function buildRecommendations(ctx){
   if(r.length===0)r.push('All indicators healthy. Consider prepayments for optimization.');
   return r;
 }
+/* ═══════════════════════════════════════════════════
+   ENHANCED OUTPUT — Core Reason, Worst Case, Delta
+   These functions are ADDITIVE — they do not change
+   any existing calculation or rendering logic.
+═══════════════════════════════════════════════════ */
+
+/**
+ * renderCoreReason — Why is this verdict what it is?
+ * Extracts the single most important signal.
+ */
+function renderCoreReason(ctx) {
+  var base = ctx.base, iShk = ctx.incomeShock, inp = ctx.inp;
+  var block = document.getElementById('coreReasonBlock');
+  var html = '<div class="core-reason-title">Why This Verdict</div>';
+
+  if (base.deficit > 0) {
+    html += '<div class="core-reason-item bad">▸ You are already losing <strong>'
+      + formatRupees(base.deficit) + '/month</strong> before any shock event.</div>';
+  }
+
+  if (ctx.zeroSavings) {
+    html += '<div class="core-reason-item bad">▸ Zero usable savings — any income disruption causes <strong>instant default</strong>.</div>';
+  }
+
+  if (ctx.realisticSurvival < 3 && !ctx.zeroSavings) {
+    html += '<div class="core-reason-item bad">▸ Under income stress, savings last only <strong>~'
+      + Math.floor(ctx.realisticSurvival) + ' months</strong> (realistic estimate).</div>';
+  } else if (ctx.realisticSurvival < 6 && !ctx.zeroSavings && base.deficit === 0) {
+    html += '<div class="core-reason-item warn">▸ Under income stress, realistic survival window is <strong>~'
+      + Math.floor(ctx.realisticSurvival) + ' months</strong>.</div>';
+  }
+
+  if (base.emiRatio > ctx.thresholds.risky) {
+    html += '<div class="core-reason-item bad">▸ EMI ratio <strong>' + formatPct(base.emiRatio)
+      + '</strong> exceeds danger threshold of ' + formatPct(ctx.thresholds.risky) + '.</div>';
+  } else if (base.emiRatio > ctx.thresholds.warn) {
+    html += '<div class="core-reason-item warn">▸ EMI ratio <strong>' + formatPct(base.emiRatio)
+      + '</strong> is in the warning zone (safe: ' + formatPct(ctx.thresholds.green) + ').</div>';
+  }
+
+  if (ctx.rateShock && ctx.rateShock.negAmort) {
+    html += '<div class="core-reason-item bad">▸ <strong>Debt trap detected</strong> — at +2% rate, monthly interest exceeds your EMI.</div>';
+  }
+
+  if (inp.unsecuredRatio > 0.25) {
+    html += '<div class="core-reason-item bad">▸ Unsecured debt is <strong>' + formatPct(inp.unsecuredRatio)
+      + '</strong> of income — the #1 default driver in India.</div>';
+  }
+
+  if (ctx.verdict === 'SAFE') {
+    html += '<div class="core-reason-item ok">▸ All three key indicators (EMI ratio, buffer, survival) are within safe thresholds.</div>';
+  }
+
+  block.innerHTML = html;
+}
+
+/**
+ * renderWorstCase — Clean worst-case summary from income shock scenario
+ */
+function renderWorstCase(ctx) {
+  var iShk = ctx.incomeShock, inp = ctx.inp;
+  var block = document.getElementById('worstCaseBlock');
+  var shP   = iShk.shockPct;
+
+  var html = '<div class="worst-case-header">⚠ Worst Case: ' + shP + '% Income Shock</div>';
+  html += '<div class="worst-case-grid">';
+
+  // Income after shock
+  html += '<div class="wc-tile"><div class="wc-label">Shocked Income</div>'
+    + '<div class="wc-value warn">₹' + Math.round(iShk.shockedIncome).toLocaleString('en-IN') + '</div>'
+    + '<div class="wc-sub">from ₹' + Math.round(inp.income).toLocaleString('en-IN') + '</div></div>';
+
+  // Monthly deficit
+  var defVal = iShk.deficit > 0
+    ? '<div class="wc-value bad">₹' + Math.round(iShk.deficit).toLocaleString('en-IN') + '/mo</div>'
+    : '<div class="wc-value ok">Surplus</div>';
+  html += '<div class="wc-tile"><div class="wc-label">Monthly Gap</div>'
+    + defVal + '<div class="wc-sub">shortfall during shock</div></div>';
+
+  // Realistic time to failure
+  var realS = ctx.realisticSurvival;
+  var survText, survCls;
+  if (ctx.zeroSavings) {
+    survText = 'INSTANT'; survCls = 'bad';
+  } else if (!isFinite(realS)) {
+    survText = '∞'; survCls = 'ok';
+  } else {
+    survText = '~' + Math.floor(realS) + ' mo'; survCls = survivalColor(realS);
+  }
+  html += '<div class="wc-tile"><div class="wc-label">Time to Failure</div>'
+    + '<div class="wc-value ' + survCls + '">' + survText + '</div>'
+    + '<div class="wc-sub">realistic estimate</div></div>';
+
+  html += '</div>';
+  block.innerHTML = html;
+}
+
+/**
+ * renderDeltaSummary — Top 3 actionable changes (concise version for above-fold)
+ */
+function renderDeltaSummary(ctx) {
+  var block = document.getElementById('deltaSummaryBlock');
+  if (ctx.verdict === 'SAFE' || !ctx.delta || ctx.delta.length === 0) {
+    block.innerHTML = '';
+    return;
+  }
+
+  var html = '<div class="delta-title">What to Change</div>';
+  var items = ctx.delta.slice(0, 3);
+
+  items.forEach(function(d) {
+    html += '<div class="delta-item">'
+      + '<div class="delta-left">'
+      + '<div class="delta-type">' + d.type + '</div>'
+      + '<div class="delta-value">' + d.message + '</div>'
+      + '</div></div>';
+  });
+
+  block.innerHTML = html;
+}
