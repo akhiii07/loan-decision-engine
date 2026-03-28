@@ -287,64 +287,91 @@
   <!-- RESULTS PANEL                      -->
   <!-- ═══════════════════════════════════ -->
   <div class="panel" id="resultsPanel" style="display:none">
-    <div class="panel-header">
-      <span class="tag">02</span>
-      <h2>Decision Report</h2>
+
+    <!-- SECTION 1: HERO -->
+    <div id="hero">
+      <div class="hero-score" id="heroScore"></div>
+      <div class="hero-verdict" id="heroVerdict"></div>
+      <div class="hero-summary" id="heroSummary"></div>
     </div>
 
-    <!-- 1. SCORE — centered hero -->
-    <div class="rp-score-section" id="scoreBlock"></div>
-
-    <!-- 2. RISK FLAGS -->
-    <div class="flags-block" id="flagsBlock" style="display:none"></div>
-
-    <!-- 3. WORST-CASE — large metric boxes -->
-    <div class="rp-worst-case-wrap">
-      <div class="rp-section-hdr" id="impactHeader"></div>
-      <div class="impact-grid" id="impactGrid"></div>
+    <!-- SECTION 2: 3 CORE METRICS -->
+    <div id="core-metrics">
+      <div class="metric-card" data-expand="net">
+        <div class="metric-value" id="cmNet"></div>
+        <div class="metric-label">Monthly Net</div>
+        <div class="metric-sub">Under stress · tap for details</div>
+      </div>
+      <div class="metric-card" data-expand="survival">
+        <div class="metric-value" id="cmSurvival"></div>
+        <div class="metric-label">Time to Failure</div>
+        <div class="metric-sub">Under shock · tap for details</div>
+      </div>
+      <div class="metric-card" data-expand="emi">
+        <div class="metric-value" id="cmEmi"></div>
+        <div class="metric-label">EMI Ratio</div>
+        <div class="metric-sub">Under stress · tap for details</div>
+      </div>
     </div>
 
-    <!-- 4. SPLIT ROW: Stress Scenarios (left) | What To Change (right) -->
-    <div class="rp-split-row">
-      <div class="rp-col-left">
-        <div class="rp-col-hdr">Impact Analysis</div>
+    <!-- Metric expand details (hidden by default) -->
+    <div class="metric-detail" id="expand-net" style="display:none"></div>
+    <div class="metric-detail" id="expand-survival" style="display:none"></div>
+    <div class="metric-detail" id="expand-emi" style="display:none"></div>
+
+    <!-- SECTION 3: WORST CASE -->
+    <div id="worst-case" class="alert-card">
+      <div class="wc-title">&#9888; Worst Case Scenario</div>
+      <div id="wcContent" class="wc-content"></div>
+    </div>
+
+    <!-- SECTION 4: TOP RISKS -->
+    <div id="top-risks">
+      <div class="tr-label">Top Risks</div>
+      <div id="topRisksItems"></div>
+    </div>
+
+    <!-- SECTION 5: DECISION DELTA -->
+    <div id="decision-delta">
+      <div class="dd-title" id="ddTitle"></div>
+      <div id="ddOptions"></div>
+    </div>
+
+    <!-- SECTION 6: EXPANDABLE DETAILS -->
+    <div class="expandable" id="detailsExpandable">
+      <div class="expand-header" id="expandToggleBtn">
+        <span>Detailed Analysis</span>
+        <span class="expand-arrow" id="expandArrow">&#8595;</span>
+      </div>
+      <div class="expand-content" id="expandContent" style="display:none">
         <div class="block" id="scenarioBlock"></div>
         <div class="recovery-block" id="recoveryBlock" style="display:none"></div>
         <div class="block" id="coreReasonBlock" style="display:none"></div>
-      </div>
-      <div class="rp-col-right">
-        <div class="rp-col-hdr">What Should You Change?</div>
-        <div class="block" id="deltaBlock" style="display:none"></div>
-        <div class="block"><ul class="reco-list" id="recoList"></ul></div>
         <div class="block" id="eligBlock"></div>
+        <div class="block" id="prepayBlock" style="display:none"></div>
+        <div class="rp-graph-block" id="crossoverBlock"></div>
+        <div class="rp-graph-block" id="trendBlock" style="display:none"></div>
         <div class="baseline-ref" id="baselineRef"></div>
+        <div id="perspectiveBlock" style="display:none"></div>
       </div>
     </div>
 
-    <!-- 5. INFLATION CROSSOVER — SVG graph -->
-    <div class="rp-graph-block" id="crossoverBlock"></div>
-
-    <!-- 6. EMI BURDEN OVER TIME — SVG graph -->
-    <div class="rp-graph-block" id="trendBlock" style="display:none"></div>
-
-    <!-- Hidden: analysis text (read by stepflow.js for injections) -->
+    <!-- Hidden compat divs — renderer writes here for backward compat -->
+    <div id="scoreBlock" style="display:none"></div>
+    <div id="flagsBlock" style="display:none"></div>
+    <div id="impactHeader" style="display:none"></div>
+    <div id="impactGrid" style="display:none"></div>
+    <div id="deltaBlock" style="display:none"></div>
+    <div id="recoList" style="display:none"></div>
     <div id="analysisText" style="display:none"></div>
-
-    <!-- Hidden: renderer targets not shown in new layout -->
     <div class="decision-banner" id="decisionBanner" style="display:none"></div>
-    <div class="block" id="prepayBlock" style="display:none"></div>
-    <div class="block" id="perspectiveBlock" style="display:none"></div>
     <div id="breakpointRows" style="display:none"></div>
     <div id="worstCaseBlock" style="display:none"></div>
     <div id="deltaSummaryBlock" style="display:none"></div>
-
-    <!-- Hidden: stepflow injection targets -->
-    <div class="sf-core-reason" id="sfCoreReason" style="display:none"></div>
-    <div class="sf-worst-case" id="sfWorstCase" style="display:none"></div>
-    <div class="sf-ttf" id="sfTTF" style="display:none"></div>
-    <div class="sf-delta" id="sfDelta" style="display:none"></div>
-
-    <!-- Hidden: shorthand aliases -->
+    <div id="sfCoreReason" style="display:none"></div>
+    <div id="sfWorstCase" style="display:none"></div>
+    <div id="sfTTF" style="display:none"></div>
+    <div id="sfDelta" style="display:none"></div>
     <div id="scB" style="display:none"></div>
     <div id="dB" style="display:none"></div>
     <div id="fB" style="display:none"></div>
@@ -354,6 +381,7 @@
     <div id="scnB" style="display:none"></div>
     <div id="bpR" style="display:none"></div>
     <div id="psyB" style="display:none"></div>
+
   </div>
 
   <!-- Placeholder -->
