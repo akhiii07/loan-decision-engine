@@ -1,0 +1,234 @@
+/* ═══════════════════════════════════════
+   COMPONENTS — Panels, forms, buttons, flags
+═══════════════════════════════════════ */
+
+/* Panel */
+.panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+
+.panel-header {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-header .tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: #000;
+  background: var(--color-accent);
+  padding: 2px 6px;
+}
+
+.panel-header h2 {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--color-muted);
+  text-transform: uppercase;
+}
+
+/* Form sections */
+.form-section {
+  padding: 14px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.form-section:last-child {
+  border-bottom: none;
+}
+
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+/* Fields */
+.field {
+  margin-bottom: 10px;
+}
+
+.field:last-child {
+  margin-bottom: 0;
+}
+
+label {
+  display: block;
+  font-size: 11px;
+  color: var(--color-muted);
+  margin-bottom: 3px;
+  font-family: var(--font-mono);
+}
+
+label .hint {
+  color: var(--color-border-2);
+  font-size: 9px;
+}
+
+input[type="number"],
+select {
+  width: 100%;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding: 7px 9px;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  transition: border-color 0.15s;
+}
+
+input[type="number"]:focus,
+select:focus {
+  border-color: var(--color-accent);
+}
+
+input[type="number"]::placeholder {
+  color: var(--color-border-2);
+}
+
+/* Field rows */
+.field-row  { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.field-row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+/* Input with ₹ prefix */
+.input-prefix {
+  position: relative;
+}
+
+.input-prefix span {
+  position: absolute;
+  left: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  pointer-events: none;
+}
+
+.input-prefix input {
+  padding-left: 20px;
+}
+
+/* Select wrapper (arrow) */
+.select-wrap {
+  position: relative;
+}
+
+.select-wrap::after {
+  content: '▾';
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-muted);
+  font-size: 11px;
+  pointer-events: none;
+}
+
+/* Shock hint */
+.shock-hint {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-accent-2);
+  margin-top: 3px;
+  display: none;
+}
+
+/* Button */
+.cta-wrap {
+  padding: 14px;
+}
+
+.btn-analyze {
+  width: 100%;
+  background: var(--color-accent);
+  color: #000;
+  border: none;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 11px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: background 0.15s;
+}
+
+.btn-analyze:hover {
+  background: var(--color-accent-2);
+}
+
+/* Error message */
+.error-msg {
+  margin: 0 14px 10px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-danger);
+  display: none;
+}
+
+/* Risk flags */
+.flags-block {
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.risk-flag {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 2px 7px;
+  text-transform: uppercase;
+}
+
+.risk-flag.bad  { background: rgba(248,113,113,0.12); color: var(--color-danger);   border: 1px solid rgba(248,113,113,0.25); }
+.risk-flag.warn { background: rgba(251,146,60,0.10);  color: var(--color-warning);  border: 1px solid rgba(251,146,60,0.25); }
+.risk-flag.info { background: rgba(96,165,250,0.10);  color: var(--color-moderate);  border: 1px solid rgba(96,165,250,0.25); }
+.risk-flag.good { background: rgba(52,211,153,0.10);  color: var(--color-safe);      border: 1px solid rgba(52,211,153,0.25); }
+
+/* Placeholder */
+.placeholder-state {
+  padding: 40px 14px;
+  text-align: center;
+}
+
+.placeholder-state p {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-border-2);
+}
+
+/* Generic block */
+.block {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.block-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  margin-bottom: 7px;
+}

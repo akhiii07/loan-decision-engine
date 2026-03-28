@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loan Decision Engine</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/results.css">
+</head>
+<body>
+
+<header>
+  <div class="logo-mark">LDE</div>
+  <div>
+    <h1>LOAN DECISION ENGINE</h1>
+    <p>Eligibility · Affordability · Stress · Decision</p>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- ═══════════════════════════════════ -->
+  <!--  INPUT PANEL                       -->
+  <!-- ═══════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">
+      <span class="tag">01</span>
+      <h2>Financial Profile</h2>
+    </div>
+
+    <!-- Income -->
+    <div class="form-section">
+      <div class="section-label">Income</div>
+      <div class="field">
+        <label>Net Monthly Income (₹)</label>
+        <div class="input-prefix"><span>₹</span>
+          <input type="number" id="income" placeholder="e.g. 80000" min="0">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Income Type</label>
+          <div class="select-wrap">
+            <select id="incomeType">
+              <option value="salaried">Salaried</option>
+              <option value="self-employed">Self-Employed</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Income Shock %</label>
+          <input type="number" id="incomeShock" value="30" min="0" max="100">
+          <div class="shock-hint" id="shockHint">⚠ Min 40% for self-employed</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Annual Bonus (₹) <span class="hint">optional</span></label>
+        <div class="input-prefix"><span>₹</span>
+          <input type="number" id="annualBonus" placeholder="0" min="0" value="0">
+        </div>
+      </div>
+    </div>
+
+    <!-- Loan -->
+    <div class="form-section">
+      <div class="section-label">Loan</div>
+      <div class="field-row">
+        <div class="field">
+          <label>Secured EMIs (₹/mo) <span class="hint">home, auto</span></label>
+          <div class="input-prefix"><span>₹</span>
+            <input type="number" id="securedEMI" placeholder="0" min="0" value="0">
+          </div>
+        </div>
+        <div class="field">
+          <label>Unsecured EMIs (₹/mo) <span class="hint">personal, cards</span></label>
+          <div class="input-prefix"><span>₹</span>
+            <input type="number" id="unsecuredEMI" placeholder="0" min="0" value="0">
+          </div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>New Loan Amount (₹)</label>
+          <div class="input-prefix"><span>₹</span>
+            <input type="number" id="loanAmount" placeholder="e.g. 5000000" min="0">
+          </div>
+        </div>
+        <div class="field">
+          <label>Loan Purpose</label>
+          <div class="select-wrap">
+            <select id="loanPurpose">
+              <option value="home">Home Loan</option>
+              <option value="auto">Auto Loan</option>
+              <option value="personal">Personal Loan</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="field-row3">
+        <div class="field">
+          <label>Rate (%)</label>
+          <input type="number" id="interestRate" placeholder="8.5" min="0" step="0.1">
+        </div>
+        <div class="field">
+          <label>Tenure (mo)</label>
+          <input type="number" id="tenure" placeholder="240" min="1">
+        </div>
+        <div class="field">
+          <label>Type</label>
+          <div class="select-wrap">
+            <select id="rateType">
+              <option value="floating">Floating</option>
+              <option value="fixed">Fixed</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Months Already Paid <span class="hint">0 if new</span></label>
+        <input type="number" id="monthsPaid" placeholder="0" min="0" value="0">
+      </div>
+    </div>
+
+    <!-- Property -->
+    <div class="form-section">
+      <div class="section-label">Property (optional)</div>
+      <div class="field-row">
+        <div class="field">
+          <label>Property Value (₹)</label>
+          <div class="input-prefix"><span>₹</span>
+            <input type="number" id="propertyValue" placeholder="0" min="0" value="0">
+          </div>
+        </div>
+        <div class="field">
+          <label>Down Payment (₹)</label>
+          <div class="input-prefix"><span>₹</span>
+            <input type="number" id="downPayment" placeholder="0" min="0" value="0">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Expenses -->
+    <div class="form-section">
+      <div class="section-label">Monthly Expenses</div>
+      <div class="field">
+        <label>Dependents <span class="hint">spouse, children, parents</span></label>
+        <input type="number" id="dependents" placeholder="e.g. 2" min="0" value="0">
+      </div>
+      <div class="field">
+        <label>Essential (₹) <span class="hint">rent, food, utilities</span></label>
+        <div class="input-prefix"><span>₹</span>
+          <input type="number" id="essentialExp" placeholder="e.g. 25000" min="0">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Lifestyle (₹)</label>
+          <div class="input-prefix"><span>₹</span>
+            <input type="number" id="lifestyleExp" placeholder="0" min="0" value="0">
+          </div>
+        </div>
+        <div class="field">
+          <label>Semi-Fixed (₹) <span class="hint">school, family</span></label>
+          <div class="input-prefix"><span>₹</span>
+            <input type="number" id="semiFixedExp" placeholder="0" min="0" value="0">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Savings -->
+    <div class="form-section">
+      <div class="section-label">Savings & Liquidity</div>
+      <div class="field-row3">
+        <div class="field">
+          <label>Cash + Bank (₹) <span class="hint">instant</span></label>
+          <div class="input-prefix"><span>₹</span>
+            <input type="number" id="cashBalance" placeholder="100000" min="0" value="0">
+          </div>
+        </div>
+        <div class="field">
+          <label>Fixed Deposits (₹) <span class="hint">70% usable</span></label>
+          <div class="input-prefix"><span>₹</span>
+            <input type="number" id="fdBalance" placeholder="0" min="0" value="0">
+          </div>
+        </div>
+        <div class="field">
+          <label>Other Invest. (₹) <span class="hint">30% usable</span></label>
+          <div class="input-prefix"><span>₹</span>
+            <input type="number" id="otherSavings" placeholder="0" min="0" value="0">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="error-msg" id="errorMsg"></div>
+    <div class="cta-wrap">
+      <button class="btn-analyze" id="analyzeBtn">▶ Analyze Loan Decision</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════ -->
+  <!--  RESULTS PANEL                     -->
+  <!-- ═══════════════════════════════════ -->
+  <div class="panel" id="resultsPanel">
+    <div class="panel-header">
+      <span class="tag">02</span>
+      <h2>Decision Report</h2>
+    </div>
+
+    <div class="score-block" id="scoreBlock"></div>
+    <div class="decision-banner" id="decisionBanner"></div>
+    <div class="flags-block" id="flagsBlock" style="display:none"></div>
+
+    <!-- Impact (stressed state) -->
+    <div class="impact-header" id="impactHeader"></div>
+    <div class="impact-grid" id="impactGrid"></div>
+
+    <!-- Scenarios -->
+    <div class="block" id="scenarioBlock"></div>
+
+    <!-- Analysis -->
+    <div class="block">
+      <div class="block-label">Stress Impact Analysis</div>
+      <div class="analysis-text" id="analysisText"></div>
+    </div>
+
+    <!-- Recovery -->
+    <div class="recovery-block" id="recoveryBlock" style="display:none"></div>
+
+    <!-- Recommendations -->
+    <div class="block">
+      <div class="block-label">How to Prevent / Mitigate</div>
+      <ul class="reco-list" id="recoList"></ul>
+    </div>
+
+    <!-- Decision Delta -->
+    <div class="block" id="deltaBlock" style="display:none"></div>
+
+    <!-- Prepayment -->
+    <div class="block" id="prepayBlock" style="display:none"></div>
+
+    <!-- Crossover -->
+    <div class="block" id="crossoverBlock" style="display:none"></div>
+
+    <!-- Baseline ref -->
+    <div class="baseline-ref" id="baselineRef"></div>
+
+    <!-- Eligibility -->
+    <div class="block" id="eligBlock"></div>
+
+    <!-- EMI Trend -->
+    <div class="block" id="trendBlock" style="display:none"></div>
+
+    <!-- Breakpoints -->
+    <div class="block">
+      <div class="block-label">Critical Thresholds</div>
+      <div id="breakpointRows"></div>
+    </div>
+
+    <!-- Perspective -->
+    <div class="block" id="perspectiveBlock" style="display:none"></div>
+  </div>
+
+  <!-- Placeholder -->
+  <div class="panel" id="placeholderPanel">
+    <div class="panel-header">
+      <span class="tag">02</span>
+      <h2>Decision Report</h2>
+    </div>
+    <div class="placeholder-state">
+      <p>Fill in your financial profile and click<br>"Analyze Loan Decision".</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!--  SCRIPTS (order matters)           -->
+<!-- ═══════════════════════════════════ -->
+<script src="js/config.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/emi.js"></script>
+<script src="js/snapshot.js"></script>
+<script src="js/eligibility.js"></script>
+<script src="js/scenarios.js"></script>
+<script src="js/recovery.js"></script>
+<script src="js/scoring.js"></script>
+<script src="js/verdict.js"></script>
+<script src="js/analysis.js"></script>
+<script src="js/renderer.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>
