@@ -1,0 +1,558 @@
+/* ═══════════════════════════════════════════════════════
+   STEP FLOW CONTROLLER
+   Wraps existing UI into a multi-step wizard.
+   Does NOT modify any calculation logic.
+   ═══════════════════════════════════════════════════════ */
+
+(function () {
+  "use strict";
+
+  // ─── State ─────────────────────────────────────
+  let userIntent = null;   // "new" | "existing"
+  let currentStep = 0;     // 0 = intent screen
+  let stepOrder = [];       // computed based on intent
+
+  // ─── DOM refs ──────────────────────────────────
+  const $ = id => document.getElementById(id);
+  const btnBack = $("btnBack");
+  const btnNext = $("btnNext");
+  const stepNav = $("stepNav");
+  const stepProgress = $("stepProgress");
+  const stepLabel = $("stepLabel");
+  const analyzeBtn = $("analyzeBtn");
+
+  // All step elements
+  const allSteps = document.querySelectorAll(".step");
+
+  // ─── Step definitions ─────────────────────────
+  // Steps 5 (loan) and 6 (property) are conditional
+  const BASE_STEPS = [0, 1, 2, 3, 4]; // intent, income, EMIs, expenses, savings
+  const NEW_LOAN_STEPS = [5, 6];       // loan, property
+  const REVIEW_STEP = "review";
+
+  function buildStepOrder() {
+    if (userIntent === "new") {
+      stepOrder = [...BASE_STEPS, ...NEW_LOAN_STEPS, REVIEW_STEP];
+    } else {
+      stepOrder = [...BASE_STEPS, REVIEW_STEP];
+    }
+  }
+
+  // ─── Navigation ────────────────────────────────
+
+  function getStepIndex() {
+    return stepOrder.indexOf(currentStep);
+  }
+
+  function getTotalSteps() {
+    return stepOrder.length;
+  }
+
+  function isLastStep() {
+    return getStepIndex() === getTotalSteps() - 1;
+  }
+
+  function isFirstStep() {
+    return getStepIndex() === 0;
+  }
+
+  function showStep(stepId) {
+    allSteps.forEach(s => s.classList.remove("active"));
+    const target = stepId === "review"
+      ? document.getElementById("step-review")
+      : document.getElementById("step-" + stepId);
+    if (target) target.classList.add("active");
+    updateNav();
+    updateProgress();
+    updateLiveIndicators();
+    if (stepId === "review") buildReview();
+  }
+
+  function goNext() {
+    if (!validateCurrentStep()) return;
+    const idx = getStepIndex();
+    if (idx < getTotalSteps() - 1) {
+      currentStep = stepOrder[idx + 1];
+      showStep(currentStep);
+    }
+    // If on review (last step), trigger analysis
+    if (isLastStep() && currentStep === "review") {
+      // btn shows "Analyze" on review
+    }
+  }
+
+  function goBack() {
+    const idx = getStepIndex();
+    if (idx > 0) {
+      currentStep = stepOrder[idx - 1];
+      showStep(currentStep);
+    }
+  }
+
+  function updateNav() {
+    if (currentStep === 0) {
+      // Intent screen — hide nav
+      stepNav.style.display = "none";
+      return;
+    }
+    stepNav.style.display = "flex";
+
+    // Back button
+    btnBack.style.display = getStepIndex() > 1 ? "inline-flex" : "none";
+    // Hide back on step 1 (first real input step after intent)
+    if (currentStep === 1) btnBack.style.display = "inline-flex"; // allow going back to intent
+
+    // Next button
+    if (isLastStep()) {
+      btnNext.textContent = "▶ Analyze";
+      btnNext.classList.add("btn-analyze-final");
+    } else {
+      btnNext.textContent = "Next →";
+      btnNext.classList.remove("btn-analyze-final");
+    }
+  }
+
+  function updateProgress() {
+    if (currentStep === 0) {
+      stepProgress.innerHTML = "";
+      stepLabel.textContent = "";
+      return;
+    }
+
+    const idx = getStepIndex();
+    const total = getTotalSteps() - 1; // don't count intent (step 0)
+    const adjustedIdx = idx; // index in stepOrder (0-based, 0=intent)
+
+    const labels = {
+      1: "Income",
+      2: "Existing EMIs",
+      3: "Expenses",
+      4: "Savings",
+      5: "Loan Details",
+      6: "Property",
+      review: "Review"
+    };
+
+    // Build progress dots
+    let html = "";
+    for (let i = 1; i < stepOrder.length; i++) {
+      const sid = stepOrder[i];
+      const cls = i < idx ? "done" : i === idx ? "active" : "";
+      html += `<div class="progress-dot ${cls}" data-label="${labels[sid] || ''}">${i}</div>`;
+      if (i < stepOrder.length - 1) html += `<div class="progress-line ${i < idx ? 'done' : ''}"></div>`;
+    }
+    stepProgress.innerHTML = html;
+    stepLabel.textContent = `Step ${idx} of ${total} — ${labels[currentStep] || "Review"}`;
+  }
+
+  // ─── Validation ────────────────────────────────
+
+  function validateCurrentStep() {
+    const errEl = $("errorMsg");
+    errEl.textContent = "";
+
+    if (currentStep === 1) {
+      const inc = parseFloat($("income")?.value);
+      if (!inc || inc <= 0) {
+        errEl.textContent = "Please enter your net monthly income.";
+        return false;
+      }
+    }
+    if (currentStep === 3) {
+      const ess = parseFloat($("essentialExp")?.value);
+      if (!ess || ess <= 0) {
+        errEl.textContent = "Please enter your essential monthly expenses.";
+        return false;
+      }
+    }
+    if (currentStep === 5 && userIntent === "new") {
+      const la = parseFloat($("loanAmount")?.value);
+      const rt = parseFloat($("interestRate")?.value);
+      const tn = parseFloat($("tenure")?.value);
+      if (!la || la <= 0) { errEl.textContent = "Please enter the loan amount."; return false; }
+      if (!rt || rt <= 0) { errEl.textContent = "Please enter the interest rate."; return false; }
+      if (!tn || tn <= 0) { errEl.textContent = "Please enter the tenure."; return false; }
+    }
+
+    // On review (last step), trigger actual analysis
+    if (isLastStep() && currentStep === "review") {
+      triggerAnalysis();
+      return false; // prevent further navigation
+    }
+
+    return true;
+  }
+
+  // ─── Trigger Analysis ──────────────────────────
+
+  function triggerAnalysis() {
+    // For "existing" intent, zero out loan fields
+    if (userIntent === "existing") {
+      $("loanAmount").value = "0";
+      $("interestRate").value = "8.5";
+      $("tenure").value = "240";
+      $("propertyValue").value = "0";
+      $("downPayment").value = "0";
+    }
+
+    // Click the hidden original analyze button
+    analyzeBtn.click();
+
+    // After analysis renders, inject our new output sections
+    setTimeout(() => {
+      injectCoreReason();
+      injectWorstCase();
+      injectTimeToFailure();
+      injectDecisionDelta();
+    }, 150);
+  }
+
+  // ─── Intent Selection ──────────────────────────
+
+  function selectIntent(intent) {
+    userIntent = intent;
+    buildStepOrder();
+    currentStep = stepOrder[1]; // first real step (income)
+    showStep(currentStep);
+
+    // Highlight selected
+    document.querySelectorAll(".intent-btn").forEach(b => b.classList.remove("selected"));
+    const sel = intent === "new" ? $("intentNew") : $("intentExisting");
+    if (sel) sel.classList.add("selected");
+  }
+
+  // ─── Live Indicators ──────────────────────────
+
+  function updateLiveIndicators() {
+    updateSurvivalIndicator();
+    updateEMIIndicator();
+    updateLTVIndicator();
+  }
+
+  function updateSurvivalIndicator() {
+    const el = $("survivalText");
+    if (!el) return;
+    const cash = parseFloat($("cashBalance")?.value) || 0;
+    const fd = parseFloat($("fdBalance")?.value) || 0;
+    const other = parseFloat($("otherSavings")?.value) || 0;
+    const ess = parseFloat($("essentialExp")?.value) || 0;
+    const semi = parseFloat($("semiFixedExp")?.value) || 0;
+    const secEMI = parseFloat($("securedEMI")?.value) || 0;
+    const unsEMI = parseFloat($("unsecuredEMI")?.value) || 0;
+
+    const liq = cash + (fd * 0.7) + (other * 0.3);
+    const outflow = ess + semi + secEMI + unsEMI;
+
+    if (liq <= 0 || outflow <= 0) {
+      el.textContent = "Enter savings to see survival estimate";
+      return;
+    }
+
+    const months = Math.floor(liq / outflow);
+    const cls = months >= 6 ? "good" : months >= 3 ? "warn" : "danger";
+    el.textContent = `Estimated survival: ${months} months`;
+    el.className = "survival-text " + cls;
+  }
+
+  function updateEMIIndicator() {
+    const el = $("emiText");
+    if (!el) return;
+    const la = parseFloat($("loanAmount")?.value) || 0;
+    const rt = parseFloat($("interestRate")?.value) || 0;
+    const tn = parseFloat($("tenure")?.value) || 0;
+
+    if (la <= 0 || rt <= 0 || tn <= 0) {
+      el.textContent = "Enter loan details to see estimated EMI";
+      return;
+    }
+
+    // Use existing cEMI if available, else compute locally
+    let emi;
+    if (typeof cEMI === "function") {
+      emi = cEMI(la, rt, tn);
+    } else {
+      const r = rt / 12 / 100;
+      emi = la * r * Math.pow(1 + r, tn) / (Math.pow(1 + r, tn) - 1);
+    }
+
+    el.textContent = `Estimated EMI: ₹${Math.round(emi).toLocaleString("en-IN")}`;
+    el.className = "emi-text";
+  }
+
+  function updateLTVIndicator() {
+    const el = $("ltvText");
+    if (!el) return;
+    const pv = parseFloat($("propertyValue")?.value) || 0;
+    const la = parseFloat($("loanAmount")?.value) || 0;
+
+    if (pv <= 0) {
+      el.textContent = "Enter property value to see LTV ratio";
+      return;
+    }
+
+    const ltv = ((la / pv) * 100).toFixed(1);
+    const cls = ltv <= 75 ? "good" : ltv <= 85 ? "warn" : "danger";
+    el.textContent = `Loan-to-Value: ${ltv}%`;
+    el.className = "ltv-text " + cls;
+  }
+
+  // ─── Review Builder ────────────────────────────
+
+  function buildReview() {
+    const grid = $("reviewGrid");
+    if (!grid) return;
+
+    const fmt = v => {
+      const n = parseFloat(v) || 0;
+      return "₹" + n.toLocaleString("en-IN");
+    };
+
+    let rows = [
+      { label: "Mode", value: userIntent === "new" ? "New Loan Check" : "Financial Health Check" },
+      { label: "Net Monthly Income", value: fmt($("income")?.value) },
+      { label: "Income Type", value: $("incomeType")?.value || "salaried" },
+      { label: "Income Shock", value: ($("incomeShock")?.value || 30) + "%" },
+      { label: "Annual Bonus", value: fmt($("annualBonus")?.value) },
+      { label: "Secured EMIs", value: fmt($("securedEMI")?.value) },
+      { label: "Unsecured EMIs", value: fmt($("unsecuredEMI")?.value) },
+      { label: "Dependents", value: $("dependents")?.value || "0" },
+      { label: "Essential Expenses", value: fmt($("essentialExp")?.value) },
+      { label: "Lifestyle", value: fmt($("lifestyleExp")?.value) },
+      { label: "Semi-Fixed", value: fmt($("semiFixedExp")?.value) },
+      { label: "Cash + Bank", value: fmt($("cashBalance")?.value) },
+      { label: "Fixed Deposits", value: fmt($("fdBalance")?.value) },
+      { label: "Other Investments", value: fmt($("otherSavings")?.value) },
+    ];
+
+    if (userIntent === "new") {
+      rows.push(
+        { label: "Loan Amount", value: fmt($("loanAmount")?.value) },
+        { label: "Loan Purpose", value: $("loanPurpose")?.value || "home" },
+        { label: "Interest Rate", value: ($("interestRate")?.value || "0") + "%" },
+        { label: "Tenure", value: ($("tenure")?.value || "0") + " months" },
+        { label: "Rate Type", value: $("rateType")?.value || "floating" },
+        { label: "Months Paid", value: $("monthsPaid")?.value || "0" },
+        { label: "Property Value", value: fmt($("propertyValue")?.value) },
+        { label: "Down Payment", value: fmt($("downPayment")?.value) },
+      );
+    }
+
+    grid.innerHTML = rows.map(r =>
+      `<div class="review-row">
+        <span class="review-label">${r.label}</span>
+        <span class="review-value">${r.value}</span>
+      </div>`
+    ).join("");
+  }
+
+  // ═══════════════════════════════════════════════
+  // NEW OUTPUT SECTIONS (post-analysis injection)
+  // ═══════════════════════════════════════════════
+
+  // 3. Core Reason Block
+  function injectCoreReason() {
+    const block = $("coreReasonBlock");
+    if (!block) return;
+
+    // Try to extract data from existing rendered output
+    const decBanner = $("decisionBanner");
+    const analysisText = $("analysisText");
+    if (!decBanner || !analysisText) return;
+
+    const bannerText = decBanner.textContent || "";
+    const analysisContent = analysisText.textContent || "";
+
+    // Look for deficit or survival info in analysis text
+    let reasons = [];
+
+    // Check for deficit mentions
+    const deficitMatch = analysisContent.match(/deficit[^.]*₹[\d,]+/i) ||
+                         analysisContent.match(/losing[^.]*₹[\d,]+/i) ||
+                         analysisContent.match(/shortfall[^.]*₹[\d,]+/i);
+    if (deficitMatch) {
+      reasons.push(deficitMatch[0].trim());
+    }
+
+    // Check for survival mentions
+    const survivalMatch = analysisContent.match(/surviv[^.]*\d+\s*month/i);
+    if (survivalMatch) {
+      reasons.push(survivalMatch[0].trim());
+    }
+
+    if (reasons.length === 0 && analysisContent.length > 0) {
+      // Take first meaningful sentence
+      const firstSentence = analysisContent.split(".")[0];
+      if (firstSentence.length > 10) reasons.push(firstSentence.trim());
+    }
+
+    if (reasons.length > 0) {
+      block.style.display = "block";
+      block.innerHTML = `
+        <div class="block-label">⚡ Core Issue</div>
+        <div class="core-reason-list">
+          ${reasons.map(r => `<div class="core-reason-item">${r}</div>`).join("")}
+        </div>
+      `;
+    }
+  }
+
+  // 4. Worst Case Block
+  function injectWorstCase() {
+    const block = $("worstCaseBlock");
+    if (!block) return;
+
+    // Extract from impact grid
+    const impactGrid = $("impactGrid");
+    if (!impactGrid || impactGrid.innerHTML.trim() === "") return;
+
+    // Extract values from rendered impact cards
+    const cards = impactGrid.querySelectorAll(".impact-card, .metric-card, [class*='impact']");
+    if (cards.length === 0) return;
+
+    let metrics = [];
+    cards.forEach(card => {
+      const label = card.querySelector(".metric-label, .impact-label, label, .card-label, small");
+      const value = card.querySelector(".metric-value, .impact-value, .card-value, strong, .value");
+      if (label && value) {
+        metrics.push({ label: label.textContent.trim(), value: value.textContent.trim() });
+      }
+    });
+
+    if (metrics.length > 0) {
+      block.style.display = "block";
+      block.innerHTML = `
+        <div class="block-label">⚠️ Worst-Case Scenario</div>
+        <div class="worst-case-grid">
+          ${metrics.slice(0, 4).map(m =>
+            `<div class="worst-case-item">
+              <div class="wc-label">${m.label}</div>
+              <div class="wc-value">${m.value}</div>
+            </div>`
+          ).join("")}
+        </div>
+      `;
+    }
+  }
+
+  // 5. Time to Failure
+  function injectTimeToFailure() {
+    const block = $("ttfBlock");
+    if (!block) return;
+
+    const analysisText = $("analysisText")?.textContent || "";
+
+    // Look for survival / months references
+    const survMatch = analysisText.match(/(\d+\.?\d*)\s*months?\s*(of\s+)?surviv/i) ||
+                      analysisText.match(/surviv[a-z]*\s*[:=]?\s*(\d+\.?\d*)\s*month/i);
+
+    if (survMatch) {
+      const months = parseFloat(survMatch[1]);
+      block.style.display = "block";
+      if (months === 0) {
+        block.innerHTML = `
+          <div class="block-label">⏱ Time to Failure</div>
+          <div class="ttf-value danger">Instant default — zero months survival</div>
+        `;
+      } else {
+        const cls = months >= 6 ? "safe" : months >= 3 ? "warn" : "danger";
+        block.innerHTML = `
+          <div class="block-label">⏱ Time to Failure</div>
+          <div class="ttf-value ${cls}">Under stress: ~${months.toFixed(1)} months before reserves depleted</div>
+        `;
+      }
+    }
+  }
+
+  // 6. Decision Delta
+  function injectDecisionDelta() {
+    const block = $("deltaBlockNew");
+    if (!block) return;
+
+    // Check if original delta block has content
+    const origDelta = $("deltaBlock");
+    const recoveryBlock = $("recoveryBlock");
+    const recoList = $("recoList");
+
+    let deltas = [];
+
+    // Try to extract from recovery block
+    if (recoveryBlock && recoveryBlock.style.display !== "none") {
+      const items = recoveryBlock.querySelectorAll("li, .recovery-item, p");
+      items.forEach(item => {
+        const txt = item.textContent.trim();
+        if (txt.length > 5) deltas.push(txt);
+      });
+    }
+
+    // Try from recommendations
+    if (deltas.length === 0 && recoList) {
+      const lis = recoList.querySelectorAll("li");
+      lis.forEach(li => {
+        const txt = li.textContent.trim();
+        if (txt.length > 5 && deltas.length < 4) deltas.push(txt);
+      });
+    }
+
+    // Try from original delta block
+    if (deltas.length === 0 && origDelta && origDelta.style.display !== "none") {
+      const items = origDelta.querySelectorAll("li, p, .delta-item");
+      items.forEach(item => {
+        const txt = item.textContent.trim();
+        if (txt.length > 5) deltas.push(txt);
+      });
+    }
+
+    if (deltas.length > 0) {
+      block.style.display = "block";
+      block.innerHTML = `
+        <div class="block-label">🎯 What Should You Change?</div>
+        <div class="delta-list-new">
+          ${deltas.map((d, i) => `<div class="delta-item-new"><span class="delta-num">${i + 1}</span><span>${d}</span></div>`).join("")}
+        </div>
+      `;
+    }
+  }
+
+  // ─── Event Listeners ──────────────────────────
+
+  // Intent buttons
+  $("intentNew")?.addEventListener("click", () => selectIntent("new"));
+  $("intentExisting")?.addEventListener("click", () => selectIntent("existing"));
+
+  // Nav buttons
+  btnNext?.addEventListener("click", goNext);
+  btnBack?.addEventListener("click", goBack);
+
+  // Keyboard nav
+  document.addEventListener("keydown", e => {
+    if (e.key === "Enter" && currentStep !== 0 && !isLastStep()) goNext();
+  });
+
+  // Live indicator updates on input change
+  const liveInputs = ["cashBalance", "fdBalance", "otherSavings", "essentialExp",
+    "semiFixedExp", "securedEMI", "unsecuredEMI", "loanAmount", "interestRate",
+    "tenure", "propertyValue"];
+
+  liveInputs.forEach(id => {
+    const el = $(id);
+    if (el) el.addEventListener("input", updateLiveIndicators);
+  });
+
+  // Income type → shock hint
+  $("incomeType")?.addEventListener("change", function () {
+    const hint = $("shockHint");
+    if (this.value === "self-employed") {
+      hint.style.display = "block";
+      const shock = $("incomeShock");
+      if (parseFloat(shock.value) < 40) shock.value = 40;
+    } else {
+      hint.style.display = "none";
+    }
+  });
+
+  // ─── Initialize ────────────────────────────────
+  // Start at intent screen
+  showStep(0);
+  buildStepOrder(); // default, will rebuild on intent select
+
+})();
