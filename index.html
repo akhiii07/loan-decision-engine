@@ -303,8 +303,8 @@
         <div class="hero-verdict" id="heroVerdict"></div>
         <div class="hero-oneliner" id="heroOneliner"></div>
         <div class="hero-truth" id="heroTruth"></div>
-        <button type="button" class="hero-why-btn" id="heroWhyBtn">Why this score? <span id="heroWhyArrow">&#9660;</span></button>
-        <div class="hero-why-panel" id="heroWhyPanel" style="display:none">
+        <div class="hero-why-label">WHY THIS SCORE</div>
+        <div class="hero-why-panel" id="heroWhyPanel">
           <div id="heroWhyContent"></div>
         </div>
       </div>
@@ -343,8 +343,8 @@
             <div class="mc-icon">&#8594;</div>
           </div>
           <div class="mc-meaning" id="cmNetMeaning"></div>
-          <div class="mc-label">Safety Buffer</div>
-          <div class="mc-context">months of expenses covered</div>
+          <div class="mc-label">Cash Runway</div>
+          <div class="mc-context">months if income stops today</div>
           <div class="mc-benchmark" id="cmNetBench"></div>
         </div>
       </div>
@@ -355,8 +355,8 @@
             <div class="mc-icon">&#8594;</div>
           </div>
           <div class="mc-meaning" id="cmSurvivalMeaning"></div>
-          <div class="mc-label">Time to Failure</div>
-          <div class="mc-context">under income stress</div>
+          <div class="mc-label">Months to Default</div>
+          <div class="mc-context">under a job loss scenario</div>
           <div class="mc-benchmark" id="cmSurvBench"></div>
         </div>
       </div>
@@ -367,8 +367,8 @@
             <div class="mc-icon">&#8594;</div>
           </div>
           <div class="mc-meaning" id="cmEmiMeaning"></div>
-          <div class="mc-label">EMI Ratio</div>
-          <div class="mc-context">of monthly income</div>
+          <div class="mc-label">Income Locked In</div>
+          <div class="mc-context">goes to repayments monthly</div>
           <div class="mc-benchmark" id="cmEmiBench"></div>
         </div>
       </div>
@@ -379,12 +379,43 @@
     <div class="metric-expand-panel" id="expand-survival" style="display:none"></div>
     <div class="metric-expand-panel" id="expand-emi" style="display:none"></div>
 
-    <!-- SECTION 4: WHAT IF LAB -->
+    <!-- SECTION 4: LOAN COST REALITY -->
+    <div id="loan-cost-reality">
+      <div class="lcr-eyebrow">WHAT THIS LOAN ACTUALLY COSTS YOU</div>
+      <div class="lcr-grid" id="lcrGrid">
+        <div class="lcr-item lcr-primary">
+          <div class="lcr-val" id="lcrTotal"></div>
+          <div class="lcr-sub">total you will repay</div>
+        </div>
+        <div class="lcr-item">
+          <div class="lcr-val lcr-interest-val" id="lcrInterest"></div>
+          <div class="lcr-sub">paid in interest alone</div>
+        </div>
+        <div class="lcr-item">
+          <div class="lcr-val" id="lcrMultiple"></div>
+          <div class="lcr-sub">times the loan amount</div>
+        </div>
+        <div class="lcr-item">
+          <div class="lcr-val" id="lcrYears"></div>
+          <div class="lcr-sub">years of income committed</div>
+        </div>
+      </div>
+      <div class="lcr-note" id="lcrNote"></div>
+    </div>
+
+    <!-- SECTION 5: BIGGEST IMPACT MOVE -->
+    <div id="biggest-impact">
+      <div class="bi-eyebrow">&#9733; YOUR #1 PRIORITY ACTION</div>
+      <div class="bi-action" id="biAction"></div>
+      <div class="bi-impacts" id="biImpacts"></div>
+    </div>
+
+    <!-- SECTION 6: WHAT IF LAB -->
     <div id="what-if-lab">
       <div class="wil-header">
         <div class="wil-header-text">
-          <span class="wil-title">WHAT HAPPENS IF YOU CHANGE THIS?</span>
-          <span class="wil-subtitle">Drag sliders — metrics update live</span>
+          <span class="wil-title">SIMULATE A DIFFERENT SCENARIO</span>
+          <span class="wil-subtitle">Drag sliders — score and metrics update live</span>
         </div>
         <button type="button" class="wil-reset-btn" id="wilReset">&#8635; Reset</button>
       </div>
@@ -431,31 +462,25 @@
       </div>
     </div>
 
-    <!-- SECTION 5: BIGGEST IMPACT MOVE -->
-    <div id="biggest-impact">
-      <div class="bi-eyebrow">&#9733; BIGGEST IMPACT MOVE</div>
-      <div class="bi-action" id="biAction"></div>
-      <div class="bi-impacts" id="biImpacts"></div>
+    <!-- SECTION 7: RISK REALITY (merged consequences) -->
+    <div id="risk-reality">
+      <div class="rr-eyebrow">&#9888; IF THINGS GO WRONG</div>
+      <div class="rr-bullets" id="rrBullets"></div>
     </div>
 
-    <!-- SECTION 6: IF YOU DO NOTHING -->
-    <div id="if-nothing">
-      <div class="ifn-eyebrow">&#9888; IF YOU DO NOTHING</div>
-      <div class="ifn-bullets" id="ifnBullets"></div>
+    <!-- SECTION 8: YOUR NEXT STEP -->
+    <div id="next-steps">
+      <div class="ns-verdict-tag" id="nsVerdictTag"></div>
+      <div class="ns-headline" id="nsHeadline"></div>
+      <div class="ns-action" id="nsAction"></div>
+      <button type="button" class="ns-restart-btn" id="nsRestart">&#8592; Recalculate with new numbers</button>
     </div>
 
-    <!-- SECTION 7: WHAT THIS MEANS FOR YOUR LIFE -->
-    <div id="life-meaning">
-      <div class="lm-eyebrow">WHAT THIS MEANS FOR YOUR LIFE</div>
-      <div class="lm-items" id="lmItems"></div>
-    </div>
-
-    <!-- SECTION 8: FINAL DECISION -->
-    <div id="final-verdict">
-      <div class="fv-label">FINAL DECISION</div>
-      <div class="fv-verdict-text" id="fvVerdict"></div>
-      <div class="fv-reason" id="fvReason"></div>
-      <div class="fv-confidence" id="fvConfidence"></div>
+    <!-- COMPAT: keep old IDs alive for renderer.js compat writes -->
+    <div id="if-nothing" style="display:none"><div id="ifnBullets"></div></div>
+    <div id="life-meaning" style="display:none"><div id="lmItems"></div></div>
+    <div id="final-verdict" style="display:none">
+      <div id="fvVerdict"></div><div id="fvReason"></div><div id="fvConfidence"></div>
     </div>
 
     <!-- Hidden compat divs -->

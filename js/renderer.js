@@ -39,17 +39,9 @@ function renderResults(ctx) {
   var heroEl=el('hero');
   heroEl.className='v-'+verdict;
 
-  // ── "Why this score?" toggle ──
+  // ── "Why this score?" — always visible ──
   var whyContent=el('heroWhyContent');
   if(whyContent) whyContent.innerHTML=buildWhyScore(ctx);
-  var whyBtn=el('heroWhyBtn'),whyPanel=el('heroWhyPanel'),whyArrow=el('heroWhyArrow');
-  if(whyBtn&&whyPanel){
-    whyBtn.onclick=function(){
-      var open=whyPanel.style.display!=='none';
-      whyPanel.style.display=open?'none':'block';
-      if(whyArrow) whyArrow.textContent=open?'\u25bc':'\u25b2';
-    };
-  }
 
   // ═══ SECTION 2: SAFETY BAR ═══
   el('sbScore').textContent=score+' / 100';
@@ -121,7 +113,10 @@ function renderResults(ctx) {
     nbE.className='mc-benchmark '+(emiPctBase<=40?'bench-ok':'bench-warn');
   }
 
-  // ═══ SECTION 4: BIGGEST IMPACT MOVE ═══
+  // ═══ SECTION 4: LOAN COST REALITY ═══
+  renderLoanCostReality(ctx);
+
+  // ═══ SECTION 5: BIGGEST IMPACT MOVE ═══
   var biEl=el('biAction'),biImpEl=el('biImpacts');
   if(biEl&&biImpEl){
     var topD=delta&&delta.length>0?delta[0]:null;
@@ -130,32 +125,25 @@ function renderResults(ctx) {
       var biBullets=generateBiggestImpactBullets(topD,ctx);
       biImpEl.innerHTML='<div class="bi-desc">\u2192 '+topD.message+'</div>'+biBullets.map(function(b){return'<div class="bi-bullet"><span class="bi-dot">\u2713</span>'+b+'</div>';}).join('');
     } else {
-      biEl.textContent='Regular Prepayments';
-      biImpEl.innerHTML='<div class="bi-desc">\u2192 Reduce total interest and shorten loan tenure</div><div class="bi-bullet"><span class="bi-dot">\u2713</span>Saves years and significant interest cost</div>';
+      biEl.textContent='Make Regular Prepayments';
+      biImpEl.innerHTML='<div class="bi-desc">\u2192 Reduce total interest and cut years off your loan tenure</div><div class="bi-bullet"><span class="bi-dot">\u2713</span>Even small monthly prepayments save lakhs in interest over time</div>';
     }
   }
 
-  // ═══ SECTION 5: IF YOU DO NOTHING ═══
+  // ═══ SECTION 7: RISK REALITY (merged consequences) ═══
+  var rrEl=el('rrBullets');
+  if(rrEl) rrEl.innerHTML=generateRiskReality(ctx).map(function(t){return'<div class="rr-item">'+t.icon+' <span>'+t.text+'</span></div>';}).join('');
+
+  // ═══ SECTION 8: YOUR NEXT STEP ═══
+  renderNextStep(ctx);
+
+  // ── compat writes for hidden sections ──
   var ifnEl=el('ifnBullets');
   if(ifnEl) ifnEl.innerHTML=generateIfNothingBullets(ctx).map(function(t){return'<div class="ifn-item">\u26a0\ufe0e '+t+'</div>';}).join('');
-
-  // ═══ SECTION 6: LIFE MEANING ═══
   var lmEl=el('lmItems');
   if(lmEl) lmEl.innerHTML=generateLifeImpact(ctx).map(function(t){return'<div class="lm-item">'+t+'</div>';}).join('');
-
-  // ═══ SECTION 7: FINAL VERDICT ═══
-  var fvVEl=el('fvVerdict'),fvREl=el('fvReason'),fvCEl=el('fvConfidence');
   var fvSection=el('final-verdict');
   if(fvSection) fvSection.className='v-'+verdict;
-  if(fvVEl&&fvREl&&fvCEl){
-    var fvLabel=verdict==='SAFE'?'SAFE':verdict==='MODERATE'?'CONDITIONAL':'NOT SAFE';
-    fvVEl.textContent=fvLabel;
-    fvVEl.className='fv-verdict-text v-'+verdict;
-    fvREl.textContent=generateFinalReason(ctx);
-    var confText=score>=75?'High confidence \u2014 result is definitive':score>=50?'Moderate confidence \u2014 borderline case':'Low confidence \u2014 multiple risk factors active';
-    fvCEl.textContent=confText;
-    fvCEl.className='fv-confidence '+(score>=75?'c-ok':score>=50?'c-warn':'c-bad');
-  }
 
   // ═══ COMPAT / EXPANDABLE TARGETS ═══
   el('scoreBlock').innerHTML='<div class="score-hero-ring v-'+verdict+'">'+score+'</div>';
@@ -509,6 +497,144 @@ function generateFinalReason(ctx){
   }
   if(verdict==='MODERATE') return 'Manageable but EMI at '+emiPct+'% limits flexibility — income stability is essential';
   return 'EMI at '+emiPct+'% with adequate savings buffer — loan is financially sound under modelled scenarios';
+}
+
+/** Loan Cost Reality — what the loan truly costs */
+function renderLoanCostReality(ctx){
+  var inp=ctx.inp,pp=ctx.prepay;
+  var section=el('loan-cost-reality');
+  if(!section) return;
+  if(!inp.newEMI||inp.newEMI<=0||!inp.tenure||inp.tenure<=0){
+    section.style.display='none';
+    return;
+  }
+  section.style.display='';
+  var totalRepaid=inp.newEMI*inp.tenure;
+  var totalInterest=totalRepaid-inp.loanAmount;
+  var multiple=inp.loanAmount>0?(totalRepaid/inp.loanAmount):0;
+  var yrsOfIncome=inp.income>0?(totalRepaid/(inp.income*12)):0;
+
+  var tEl=el('lcrTotal'),iEl=el('lcrInterest'),mEl=el('lcrMultiple'),yEl=el('lcrYears');
+  if(tEl) tEl.textContent=formatLakh(totalRepaid);
+  if(iEl) iEl.textContent=formatLakh(totalInterest);
+  if(mEl) mEl.textContent=multiple.toFixed(2)+'\u00d7';
+  if(yEl) yEl.textContent=yrsOfIncome.toFixed(1)+'yr';
+
+  var noteEl=el('lcrNote');
+  if(noteEl){
+    var note='';
+    if(totalInterest>inp.loanAmount) note='You will pay more in interest than the principal borrowed.';
+    else note='Interest is '+Math.round((totalInterest/inp.loanAmount)*100)+'% of the principal.';
+    if(pp&&pp.savedMonths>12) note+=' Prepaying saves \u20b9'+formatLakh(pp.savedInterest)+' and '+pp.savedYears+' years.';
+    else if(ctx.interestRatio>0.5) note+=' Consider prepayments to reduce the interest burden significantly.';
+    noteEl.textContent=note;
+  }
+}
+
+/** Next Step CTA — actionable conclusion */
+function renderNextStep(ctx){
+  var verdict=ctx.verdict,score=ctx.score,delta=ctx.delta,base=ctx.base;
+  var inp=ctx.inp;
+  var tagEl=el('nsVerdictTag'),hlEl=el('nsHeadline'),actEl=el('nsAction'),restartBtn=el('nsRestart');
+  var section=el('next-steps');
+  if(!section||!tagEl||!hlEl||!actEl) return;
+  section.className='v-'+verdict;
+
+  if(verdict==='SAFE'){
+    tagEl.textContent='GO AHEAD';
+    tagEl.className='ns-verdict-tag v-SAFE';
+    hlEl.textContent='Your finances can support this loan.';
+    actEl.textContent='Keep your savings buffer above 6 months during the entire tenure. Set up annual prepayments to cut years off the loan and save significantly on interest.';
+  } else if(verdict==='MODERATE'){
+    tagEl.textContent='PROCEED WITH CAUTION';
+    tagEl.className='ns-verdict-tag v-MODERATE';
+    hlEl.textContent='Manageable — but this leaves you with limited room.';
+    var modAct='Maintain strict budget discipline. Do not take on any new debt during this tenure.';
+    if(delta&&delta.length>0) modAct+=' Your fastest path to comfort: '+delta[0].type.toLowerCase()+'.';
+    actEl.textContent=modAct;
+  } else if(verdict==='RISKY'){
+    tagEl.textContent='RECONSIDER FIRST';
+    tagEl.className='ns-verdict-tag v-RISKY';
+    hlEl.textContent='The numbers are uncomfortable. A few changes would make a real difference.';
+    var emiPct=Math.round(base.emiRatio*100);
+    var riskAct='Before signing: ';
+    if(emiPct>50) riskAct+='reduce loan amount to bring EMI below 40% of income. ';
+    else if(isFinite(base.buffer)&&base.buffer<3) riskAct+='build savings to at least 3 months of expenses. ';
+    else if(delta&&delta.length>0) riskAct+=delta[0].type+' first. ';
+    riskAct+='Use the simulator above to find the version of this loan you can actually afford.';
+    actEl.textContent=riskAct;
+  } else {
+    tagEl.textContent='DO NOT TAKE THIS LOAN';
+    tagEl.className='ns-verdict-tag v-DANGEROUS';
+    hlEl.textContent='This loan is not financially viable at your current position.';
+    var danAct='Multiple critical risk factors are active simultaneously. ';
+    if(base.deficit>0) danAct+='Your outflow already exceeds income before any loan stress. ';
+    if(ctx.zeroSavings) danAct+='Zero savings means any disruption triggers immediate default. ';
+    danAct+='Revisit in 6–12 months after increasing income or reducing existing debt.';
+    actEl.textContent=danAct;
+  }
+
+  if(restartBtn){
+    restartBtn.onclick=function(){
+      var p=el('resultsPanel'),i=el('inputPanel'),ph=el('placeholderPanel');
+      var cont=document.querySelector('.container');
+      if(p) p.style.display='none';
+      if(ph) ph.style.display='none';
+      if(cont){cont.classList.remove('results-full');cont.classList.add('wide');}
+      if(i){i.style.display='block';i.scrollIntoView({behavior:'smooth',block:'start'});}
+    };
+  }
+}
+
+/** Risk Reality — merged "if nothing" + "life meaning" */
+function generateRiskReality(ctx){
+  var items=[],base=ctx.base,inp=ctx.inp,iShk=ctx.incomeShock;
+  var realSurv=ctx.realisticSurvival,emiPct=Math.round(base.emiRatio*100);
+  var shP=iShk.shockPct,zS=ctx.zeroSavings;
+
+  // Immediate failure risk
+  if(zS){
+    items.push({icon:'\u{1F534}',text:'Zero savings — any missed paycheck triggers immediate default. There is no buffer.'});
+  } else if(isFinite(realSurv)&&realSurv<3){
+    items.push({icon:'\u{1F534}',text:'You would exhaust savings in under 3 months under a '+shP+'% income shock. One event breaks this.'});
+  } else if(isFinite(realSurv)&&realSurv<6){
+    items.push({icon:'\u26a0\ufe0f',text:'Under a job loss, savings last ~'+Math.floor(realSurv)+' months. '+(realSurv<4?'That is not enough runway to find new income.':'Build this to 6+ months for real safety.')});
+  }
+
+  // EMI stress
+  if(emiPct>50){
+    items.push({icon:'\u{1F534}',text:'EMI takes '+emiPct+'% of income — emergencies, repairs, or health costs have almost no buffer.'});
+  } else if(emiPct>40){
+    items.push({icon:'\u26a0\ufe0f',text:'At '+emiPct+'% EMI ratio, you are above the RBI safety threshold. Any income fall makes repayment painful.'});
+  }
+
+  // Career flexibility
+  if(isFinite(realSurv)&&realSurv<6&&!zS){
+    items.push({icon:'\u26a0\ufe0f',text:'Short runway means no freedom to switch jobs, take a pay cut, or handle a career gap.'});
+  }
+
+  // Rate risk
+  if(ctx.rateShock&&ctx.rateShock.negAmort){
+    items.push({icon:'\u{1F534}',text:'A 2% rate rise would create a debt trap — interest would exceed your EMI payments and debt would grow.'});
+  }
+
+  // Unsecured debt
+  if(inp.unsecuredRatio>0.15){
+    items.push({icon:'\u26a0\ufe0f',text:'Unsecured debt is '+Math.round(inp.unsecuredRatio*100)+'% of your outflow — this adds fragility on top of the home loan.'});
+  }
+
+  // Inflation crossover
+  if(ctx.crossover&&ctx.crossover.crossoverYear&&ctx.crossover.crossoverYear<=5){
+    items.push({icon:'\u26a0\ufe0f',text:'Expense inflation may outpace income growth by year '+ctx.crossover.crossoverYear+'. Net cash flow turns negative without income increases.'});
+  }
+
+  // If safe — positive note
+  if(items.length===0){
+    items.push({icon:'\u2705',text:'No critical failure scenarios identified. Your loan structure is sound under modelled stress conditions.'});
+    items.push({icon:'\u2705',text:'Maintain your savings buffer throughout the tenure and consider annual prepayments.'});
+  }
+
+  return items.slice(0,4);
 }
 
 /** Why This Score — 3-factor breakdown grid */
