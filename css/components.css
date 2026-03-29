@@ -54,12 +54,12 @@
 
 .section-label {
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: 35px;
   font-weight: 600;
   letter-spacing: 0.12em;
   color: var(--color-muted);
   text-transform: uppercase;
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 }
 
 /* Fields */
@@ -73,7 +73,7 @@
 
 label {
   display: block;
-  font-size: 15px;
+  font-size: 20px;
   color: var(--color-muted);
   margin-bottom: 8px;
   font-family: var(--font-mono);
