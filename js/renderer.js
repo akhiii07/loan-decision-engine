@@ -55,10 +55,11 @@ function renderResults(ctx) {
   // ═══ SECTION 3: CORE METRICS ═══
   var ttf=zS?'0 mo':(isFinite(realSurv)?'~'+Math.floor(realSurv)+' mo':'∞');
 
+  var bufStr=isFinite(base.buffer)?base.buffer.toFixed(1)+' mo':'\u221e';
   var cmN=el('cmNet');
-  cmN.textContent=formatRupees(iShk.net);
-  cmN.className='mc-value '+(iShk.net>=0?'ok':'bad');
-  el('cmNetMeaning').textContent=netToMeaning(iShk.net,inp.income);
+  cmN.textContent=bufStr;
+  cmN.className='mc-value '+bufferColor(base.buffer);
+  el('cmNetMeaning').textContent=bufferToMeaning(base.buffer,iShk.buffer);
 
   var cmSv=el('cmSurvival');
   cmSv.textContent=ttf;
@@ -71,7 +72,7 @@ function renderResults(ctx) {
   cmE.className='mc-value '+stEmiClass;
   el('cmEmiMeaning').textContent=emiToMeaning(stEmiR,inp.incomeType);
 
-  el('expand-net').innerHTML=buildNetExpand(base,iShk,inp,shP);
+  el('expand-net').innerHTML=buildBufferExpand(base,iShk,shP);
   el('expand-survival').innerHTML=buildSurvivalExpand(ctx,ttf,theoSurv,realSurv,shP);
   el('expand-emi').innerHTML=buildEmiExpand(base,iShk,inp,stEmiR,stEmiDispStr,stEmiClass,elOk,elig);
 
@@ -237,6 +238,8 @@ function renderResults(ctx) {
   cont.classList.remove('wide');
   cont.classList.add('results-full');
   el('resultsPanel').scrollIntoView({behavior:'smooth',block:'start'});
+  window._ldeCtx=ctx;
+  initSimSliders(ctx);
 }
 
 /** Animated number counter */
@@ -251,6 +254,147 @@ function animateCounter(domEl,target,duration){
     if(p<1) requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
+}
+
+/** Safety Buffer meaning */
+function bufferToMeaning(buf,shkBuf){
+  if(!isFinite(buf)||buf>36) return 'Excellent \u2014 savings far exceed risk horizon';
+  if(buf>=12) return 'Good buffer \u2014 12+ months of expenses covered';
+  if(buf>=6)  return 'Adequate \u2014 build toward 12 months for safety';
+  if(buf>=3)  return 'Thin \u2014 vulnerable to income disruption';
+  return 'Critical \u2014 less than 3 months of expenses covered';
+}
+
+/** Buffer expand panel (replaces net expand for card 1) */
+function buildBufferExpand(base,iShk,shP){
+  var bBase=isFinite(base.buffer)?base.buffer.toFixed(1)+' mo':'\u221e';
+  var bShk=isFinite(iShk.buffer)?iShk.buffer.toFixed(1)+' mo':'\u221e';
+  var approxSav=isFinite(base.buffer)&&base.outflow>0?(base.buffer*base.outflow):null;
+  return '<div class="ep-grid">'
+    +'<div class="ep-item"><span class="ep-l">Current safety buffer</span><span class="ep-v '+bufferColor(base.buffer)+'">'+bBase+'</span></div>'
+    +'<div class="ep-item"><span class="ep-l">Under '+shP+'% income shock</span><span class="ep-v '+bufferColor(iShk.buffer)+'">'+bShk+'</span></div>'
+    +'<div class="ep-item"><span class="ep-l">Monthly outflow (baseline)</span><span class="ep-v">'+formatRupees(base.outflow)+'</span></div>'
+    +(approxSav?'<div class="ep-item"><span class="ep-l">Usable savings</span><span class="ep-v">'+formatRupees(approxSav)+'</span></div>':'')
+    +'</div><div class="ep-why">Buffer = usable savings \u00f7 monthly outflow. Target 12+ months. Under 3 months is critical \u2014 any disruption triggers a cash crisis within one quarter.</div>';
+}
+
+/** Simulate score proxy — directional only, not exact */
+function computeSimScore(adjFOIR,adjBuf,adjTTF){
+  var s=100;
+  var fp=adjFOIR*100;
+  if(fp>70) s-=45; else if(fp>60) s-=35; else if(fp>50) s-=25;
+  else if(fp>45) s-=15; else if(fp>35) s-=5; else if(fp<=25) s+=5;
+  var buf=isFinite(adjBuf)?adjBuf:99;
+  if(buf<1) s-=35; else if(buf<3) s-=20; else if(buf<6) s-=10;
+  else if(buf<12) s+=0; else s+=5;
+  var ttf=isFinite(adjTTF)?adjTTF:99;
+  if(ttf<1) s-=25; else if(ttf<3) s-=15; else if(ttf<6) s-=5;
+  else if(ttf>=12) s+=5;
+  return Math.max(0,Math.min(100,Math.round(s)));
+}
+
+/** Initialize simulation sliders */
+function initSimSliders(ctx){
+  var inp=ctx.inp,base=ctx.base;
+  var isNew=(inp.newEMI>0);
+  var shockPct=ctx.incomeShock.shockPct;
+
+  var loanWrap=el('simLoanWrap');
+  if(loanWrap) loanWrap.style.display=isNew?'flex':'none';
+
+  var sLoan=el('simLoan'),sSav=el('simSavings'),sInc=el('simIncome');
+  if(!sLoan||!sSav||!sInc) return;
+
+  // Set ranges
+  var la=inp.loanAmount||0;
+  sLoan.min=Math.round(la*0.3/10000)*10000;
+  sLoan.max=Math.round(la*1.8/10000)*10000||5000000;
+  sLoan.step=Math.max(10000,Math.round(la*0.02/10000)*10000);
+  sLoan.value=la;
+
+  var sv=inp.savings||0;
+  sSav.min=0;
+  sSav.max=Math.round(Math.max(sv*2.5,300000)/10000)*10000;
+  sSav.step=Math.max(10000,Math.round(sv*0.04/10000)*10000)||50000;
+  sSav.value=sv;
+
+  var inc=inp.income||0;
+  sInc.min=Math.round(inc*0.4/1000)*1000;
+  sInc.max=Math.round(inc*2/1000)*1000||200000;
+  sInc.step=Math.max(1000,Math.round(inc*0.02/1000)*1000);
+  sInc.value=inc;
+
+  function fmtK(n){return n>=100000?'\u20b9'+(n/100000).toFixed(1)+'L':'\u20b9'+Math.round(n/1000)+'K';}
+
+  function update(){
+    var adjLoan=isNew?parseFloat(sLoan.value)||0:la;
+    var adjSav=parseFloat(sSav.value)||0;
+    var adjInc=parseFloat(sInc.value)||1;
+
+    if(el('simLoanVal')) el('simLoanVal').textContent=fmtK(adjLoan);
+    if(el('simSavingsVal')) el('simSavingsVal').textContent=fmtK(adjSav);
+    if(el('simIncomeVal')) el('simIncomeVal').textContent=fmtK(adjInc);
+
+    // Compute adjusted EMI for new loan
+    var adjEMI=0;
+    if(isNew&&adjLoan>0&&inp.rate>0&&inp.tenure>0){
+      var r=(inp.rate/12)/100;
+      adjEMI=adjLoan*r*Math.pow(1+r,inp.tenure)/(Math.pow(1+r,inp.tenure)-1);
+    }
+    // Replace newEMI in outflow, keep rest constant
+    var adjOutflow=adjEMI+(base.outflow-(inp.newEMI||0));
+    adjOutflow=Math.max(adjOutflow,1);
+    var adjFOIR=adjOutflow/adjInc;
+    var adjBuf=adjSav/adjOutflow;
+    var shockInc=adjInc*(1-shockPct/100);
+    var shockNet=shockInc-adjOutflow;
+    var adjTTF=shockNet>=0?Infinity:(adjSav>0?adjSav/Math.abs(shockNet):0);
+
+    var foirPct=Math.round(adjFOIR*100);
+    var origFoir=Math.round(base.emiRatio*100);
+    var foirDelta=foirPct-origFoir;
+    var foirCls=adjFOIR<=0.4?'ok':adjFOIR<=0.5?'warn':'bad';
+
+    var bufStr=isFinite(adjBuf)?adjBuf.toFixed(1)+' mo':'\u221e';
+    var bufCls=bufferColor(adjBuf);
+
+    var ttfStr=(!isFinite(adjTTF)||adjTTF>36)?'Stable':(adjTTF<1?'< 1 mo':'~'+Math.floor(adjTTF)+' mo');
+    var ttfCls=(!isFinite(adjTTF)||adjTTF>=12)?'ok':(adjTTF>=6?'warn':'bad');
+
+    var simScore=computeSimScore(adjFOIR,adjBuf,adjTTF);
+    var origScore=ctx.score;
+    var sdelta=simScore-origScore;
+    var sdeltaStr=(sdelta>0?'+':'')+sdelta;
+    var sdeltaCls=sdelta>5?'ok':sdelta<-5?'bad':'muted';
+    var sScoreCls=simScore>=70?'ok':simScore>=50?'warn':'bad';
+
+    var liveEl=el('simLiveMetrics');
+    if(!liveEl) return;
+    liveEl.innerHTML=
+      '<div class="sim-badge"><div class="sim-badge-val '+foirCls+'">'+foirPct+'%</div>'
+      +'<div class="sim-badge-label">EMI Ratio</div>'
+      +(foirDelta!==0?'<div class="sim-badge-delta '+(foirDelta>0?'bad':'ok')+'">'+(foirDelta>0?'+':'')+foirDelta+'%p</div>':'')
+      +'</div>'
+      +'<div class="sim-badge"><div class="sim-badge-val '+bufCls+'">'+bufStr+'</div>'
+      +'<div class="sim-badge-label">Safety Buffer</div>'
+      +'</div>'
+      +'<div class="sim-badge"><div class="sim-badge-val '+ttfCls+'">'+ttfStr+'</div>'
+      +'<div class="sim-badge-label">Time to Failure</div>'
+      +'</div>'
+      +'<div class="sim-badge sim-score-badge"><div class="sim-badge-val '+sScoreCls+'">'+simScore+'</div>'
+      +'<div class="sim-badge-label">Sim Score</div>'
+      +'<div class="sim-badge-delta '+sdeltaCls+'">'+sdeltaStr+'</div>'
+      +'</div>';
+  }
+
+  sLoan.addEventListener('input',update);
+  sSav.addEventListener('input',update);
+  sInc.addEventListener('input',update);
+
+  var rBtn=el('simReset');
+  if(rBtn){rBtn.onclick=function(){sLoan.value=la;sSav.value=sv;sInc.value=inc;update();};}
+
+  update();
 }
 
 /** Core Truth — brutally honest behavioral insight */
