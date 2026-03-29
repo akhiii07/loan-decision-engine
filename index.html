@@ -303,6 +303,10 @@
         <div class="hero-verdict" id="heroVerdict"></div>
         <div class="hero-oneliner" id="heroOneliner"></div>
         <div class="hero-truth" id="heroTruth"></div>
+        <button type="button" class="hero-why-btn" id="heroWhyBtn">Why this score? <span id="heroWhyArrow">&#9660;</span></button>
+        <div class="hero-why-panel" id="heroWhyPanel" style="display:none">
+          <div id="heroWhyContent"></div>
+        </div>
       </div>
     </div>
 
@@ -323,6 +327,11 @@
         <div class="sb-cursor" id="sbCursor"></div>
       </div>
       <div class="sb-hint" id="sbHint"></div>
+      <div class="sb-info-row">
+        <div class="sb-distance" id="sbDistance"></div>
+        <div class="sb-context">SAFE users typically survive 12+ months without income</div>
+      </div>
+      <div class="sb-action" id="sbAction"></div>
     </div>
 
     <!-- SECTION 3: 3 CORE METRICS -->
@@ -336,6 +345,7 @@
           <div class="mc-meaning" id="cmNetMeaning"></div>
           <div class="mc-label">Safety Buffer</div>
           <div class="mc-context">months of expenses covered</div>
+          <div class="mc-benchmark" id="cmNetBench"></div>
         </div>
       </div>
       <div class="metric-card" data-expand="survival">
@@ -347,6 +357,7 @@
           <div class="mc-meaning" id="cmSurvivalMeaning"></div>
           <div class="mc-label">Time to Failure</div>
           <div class="mc-context">under income stress</div>
+          <div class="mc-benchmark" id="cmSurvBench"></div>
         </div>
       </div>
       <div class="metric-card" data-expand="emi">
@@ -358,6 +369,7 @@
           <div class="mc-meaning" id="cmEmiMeaning"></div>
           <div class="mc-label">EMI Ratio</div>
           <div class="mc-context">of monthly income</div>
+          <div class="mc-benchmark" id="cmEmiBench"></div>
         </div>
       </div>
     </div>

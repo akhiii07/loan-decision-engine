@@ -1710,4 +1710,134 @@
   #sim-section { padding: 18px 16px; }
 }
 
+/* ═══════════════════════════════════════
+   ROUND-3 ADDITIONS — Why score, Safety bar extras, Benchmarks
+═══════════════════════════════════════ */
+
+/* ── Hero: "Why this score?" toggle ── */
+.hero-why-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 5px 12px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--color-muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.hero-why-btn:hover {
+  background: rgba(255,255,255,0.11);
+  color: var(--color-text);
+}
+
+.hero-why-panel {
+  margin-top: 10px;
+  padding: 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+}
+
+/* ── Why Score Grid ── */
+.ws-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.ws-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ws-factor {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+.ws-val {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+}
+.ws-val.ok  { color: var(--color-safe); }
+.ws-val.warn { color: var(--color-warning, #fbbf24); }
+.ws-val.bad  { color: var(--color-danger); }
+.ws-label {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  color: var(--color-muted);
+  line-height: 1.35;
+}
+.ws-label.high { color: var(--color-danger); }
+.ws-label.medium { color: var(--color-warning, #fbbf24); }
+
+@media (max-width: 560px) {
+  .ws-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* ── Safety Bar extras ── */
+.sb-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.sb-distance {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.sb-distance.ok   { color: var(--color-safe); }
+.sb-distance.warn { color: var(--color-warning, #fbbf24); }
+.sb-distance.bad  { color: var(--color-danger); }
+
+.sb-context {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  color: var(--color-muted);
+  font-style: italic;
+}
+.sb-action {
+  margin-top: 6px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--color-text);
+  opacity: 0.85;
+  line-height: 1.5;
+}
+
+/* ── Metric Card Benchmarks ── */
+.mc-benchmark {
+  margin-top: 6px;
+  padding: 4px 8px;
+  border-radius: 5px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+}
+.mc-benchmark.bench-ok {
+  color: var(--color-safe);
+  background: rgba(52,211,153,0.08);
+  border: 1px solid rgba(52,211,153,0.18);
+}
+.mc-benchmark.bench-warn {
+  color: var(--color-warning, #fbbf24);
+  background: rgba(251,191,36,0.08);
+  border: 1px solid rgba(251,191,36,0.18);
+}
+
 .expand-arrow { font-size: 13px; color: var(--color-accent); }

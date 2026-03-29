@@ -39,6 +39,18 @@ function renderResults(ctx) {
   var heroEl=el('hero');
   heroEl.className='v-'+verdict;
 
+  // ── "Why this score?" toggle ──
+  var whyContent=el('heroWhyContent');
+  if(whyContent) whyContent.innerHTML=buildWhyScore(ctx);
+  var whyBtn=el('heroWhyBtn'),whyPanel=el('heroWhyPanel'),whyArrow=el('heroWhyArrow');
+  if(whyBtn&&whyPanel){
+    whyBtn.onclick=function(){
+      var open=whyPanel.style.display!=='none';
+      whyPanel.style.display=open?'none':'block';
+      if(whyArrow) whyArrow.textContent=open?'\u25bc':'\u25b2';
+    };
+  }
+
   // ═══ SECTION 2: SAFETY BAR ═══
   el('sbScore').textContent=score+' / 100';
   var sbF=el('sbFill'),sbC=el('sbCursor');
@@ -51,6 +63,19 @@ function renderResults(ctx) {
   else if(verdict==='RISKY') hint='Significant changes needed. Start with '+(delta&&delta.length>0?delta[0].type:'reducing loan or building savings')+'.';
   else hint='Immediate action required. Multiple critical risk factors are active.';
   el('sbHint').textContent=hint;
+
+  // ── Safety bar extras ──
+  var distEl=el('sbDistance');
+  if(distEl){
+    if(score>=70){distEl.textContent='You are in the safe zone';distEl.className='sb-distance ok';}
+    else{distEl.textContent=(70-score)+' points away from SAFE';distEl.className='sb-distance '+(score>=50?'warn':'bad');}
+  }
+  var actEl=el('sbAction');
+  if(actEl){
+    if(verdict==='SAFE') actEl.textContent='Focus on prepayments to reduce total interest paid over time.';
+    else if(delta&&delta.length>0) actEl.textContent='\u2192 '+delta[0].type+': '+delta[0].message;
+    else actEl.textContent='\u2192 Build your savings buffer to at least 6 months of monthly expenses.';
+  }
 
   // ═══ SECTION 3: CORE METRICS ═══
   var ttf=zS?'0 mo':(isFinite(realSurv)?'~'+Math.floor(realSurv)+' mo':'∞');
@@ -75,6 +100,26 @@ function renderResults(ctx) {
   el('expand-net').innerHTML=buildBufferExpand(base,iShk,shP);
   el('expand-survival').innerHTML=buildSurvivalExpand(ctx,ttf,theoSurv,realSurv,shP);
   el('expand-emi').innerHTML=buildEmiExpand(base,iShk,inp,stEmiR,stEmiDispStr,stEmiClass,elOk,elig);
+
+  // ── Metric benchmarks ──
+  var nbN=el('cmNetBench');
+  if(nbN){
+    var bufMo=isFinite(base.buffer)?base.buffer:0;
+    nbN.textContent=bufMo>=6?'Target: 6+ months \u2714':'Target: 6+ months \u2014 you need '+(Math.max(0,6-bufMo)).toFixed(1)+' mo more';
+    nbN.className='mc-benchmark '+(bufMo>=6?'bench-ok':'bench-warn');
+  }
+  var nbS=el('cmSurvBench');
+  if(nbS){
+    var srvMo=zS?0:(isFinite(realSurv)?realSurv:99);
+    nbS.textContent=srvMo>=6?'Target: 6+ months \u2714':'Target: 6+ months under income stress';
+    nbS.className='mc-benchmark '+(srvMo>=6?'bench-ok':'bench-warn');
+  }
+  var nbE=el('cmEmiBench');
+  if(nbE){
+    var emiPctBase=Math.round(base.emiRatio*100);
+    nbE.textContent=emiPctBase<=40?'Target: below 40% \u2714':'Target: below 40% \u2014 you are '+(emiPctBase-40)+'% above';
+    nbE.className='mc-benchmark '+(emiPctBase<=40?'bench-ok':'bench-warn');
+  }
 
   // ═══ SECTION 4: BIGGEST IMPACT MOVE ═══
   var biEl=el('biAction'),biImpEl=el('biImpacts');
@@ -394,21 +439,39 @@ function initWhatIfLab(ctx){
   update();
 }
 
-/** Biggest impact move — bullet impacts */
+/** Biggest impact move — quantified bullet impacts */
 function generateBiggestImpactBullets(d,ctx){
-  var bullets=[],tp=(d.type||'').toLowerCase(),base=ctx.base,realSurv=ctx.realisticSurvival;
+  var bullets=[],tp=(d.type||'').toLowerCase();
+  var base=ctx.base,inp=ctx.inp,realSurv=ctx.realisticSurvival;
+  var outflow=base.outflow;
+
   if(tp.indexOf('sav')>=0){
-    bullets.push('Extends survival runway immediately');
-    if(isFinite(realSurv)&&realSurv<12) bullets.push('Current runway: ~'+Math.floor(realSurv)+' months — this directly adds to it');
+    // How much savings needed to reach 6-month buffer
+    var currSav=isFinite(base.buffer)?base.buffer*outflow:0;
+    var targetSav=6*outflow;
+    var gap=Math.max(0,targetSav-currSav);
+    if(gap>0){
+      bullets.push('Increase savings by '+formatRupees(Math.round(gap))+' to reach 6-month buffer');
+      bullets.push('+'+Math.max(1,Math.round(6-(isFinite(base.buffer)?base.buffer:0)))+' months of survival runway');
+    } else {
+      bullets.push('Build toward 12-month buffer for stronger safety score');
+      bullets.push('Survival runway extends proportionally with each extra month saved');
+    }
   } else if(tp.indexOf('loan')>=0||tp.indexOf('emi')>=0||tp.indexOf('reduce')>=0){
-    bullets.push('Frees up '+(Math.round(base.emiRatio*100))+'% of income locked in EMI');
-    bullets.push('Widens the gap between income and outflow');
+    var origEMI=inp.newEMI||0;
+    var origFOIR=Math.round(base.emiRatio*100);
+    var tenPct=Math.round(origEMI*0.1);
+    var newRatio=Math.round((base.outflow-tenPct)/inp.income*100);
+    bullets.push('Reduce loan EMI by '+formatRupees(tenPct)+'/mo \u2192 drops FOIR to ~'+newRatio+'%');
+    bullets.push('-'+(origFOIR-newRatio)+'% EMI ratio improvement');
   } else if(tp.indexOf('income')>=0){
-    bullets.push('Directly improves all ratios simultaneously');
-    bullets.push('Reduces your FOIR and builds resilience');
+    var targetInc=Math.round(outflow/0.40);
+    var incGap=Math.max(0,targetInc-inp.income);
+    if(incGap>0) bullets.push('Target income: '+formatRupees(targetInc)+' for 40% FOIR (\u2191'+formatRupees(incGap)+' needed)');
+    bullets.push('Every \u20b910K income increase drops EMI ratio by ~'+Math.round(outflow/inp.income/10)+'%');
   } else {
-    bullets.push('Reduces your risk score immediately');
-    bullets.push('Addresses the highest-impact gap in your profile');
+    bullets.push('Directly addresses the highest-scoring risk in your profile');
+    bullets.push('Implement this first — it has maximum score impact');
   }
   return bullets.slice(0,2);
 }
@@ -446,6 +509,55 @@ function generateFinalReason(ctx){
   }
   if(verdict==='MODERATE') return 'Manageable but EMI at '+emiPct+'% limits flexibility — income stability is essential';
   return 'EMI at '+emiPct+'% with adequate savings buffer — loan is financially sound under modelled scenarios';
+}
+
+/** Why This Score — 3-factor breakdown grid */
+function buildWhyScore(ctx){
+  var base=ctx.base,inp=ctx.inp,iShk=ctx.incomeShock;
+  var emiPct=Math.round(base.emiRatio*100);
+  var bufMo=isFinite(base.buffer)?base.buffer:99;
+  var realSurv=ctx.realisticSurvival;
+  var zS=ctx.zeroSavings;
+
+  // Factor 1: EMI load
+  var emiImpact=emiPct>50?'high':'medium';
+  var emiValCls=emiPct<=30?'ws-val ok':emiPct<=40?'ws-val warn':'ws-val bad';
+  var emiLabel=emiPct<=30?'Healthy':'emiPct>40'?'Too high':'Moderate';
+  if(emiPct>50) emiLabel='Critical';
+  else if(emiPct>40) emiLabel='Too High';
+  else if(emiPct>30) emiLabel='Moderate';
+  else emiLabel='Healthy';
+
+  // Factor 2: Savings buffer
+  var bufCls=bufMo>=6?'ws-val ok':bufMo>=3?'ws-val warn':'ws-val bad';
+  var bufLabel=bufMo>=6?'Strong':bufMo>=3?'Thin':'Weak';
+  var bufDisp=isFinite(base.buffer)?base.buffer.toFixed(1)+' mo':'\u221e';
+
+  // Factor 3: Stress survival
+  var srvMo=zS?0:(isFinite(realSurv)?realSurv:99);
+  var srvCls=srvMo>=6?'ws-val ok':srvMo>=3?'ws-val warn':'ws-val bad';
+  var srvLabel=srvMo>=6?'Resilient':srvMo>=3?'Fragile':'Critical';
+  var srvDisp=zS?'0 mo':(isFinite(realSurv)?'~'+Math.floor(realSurv)+' mo':'\u221e');
+
+  var shP=iShk.shockPct;
+
+  return '<div class="ws-grid">'
+    +'<div class="ws-item">'
+    +'<div class="ws-factor">EMI Load</div>'
+    +'<div class="'+emiValCls+'">'+emiPct+'%</div>'
+    +'<div class="ws-label '+emiImpact+'">'+emiLabel+' \u2014 '+(emiPct<=40?'within RBI norm':'above RBI 40% norm')+'</div>'
+    +'</div>'
+    +'<div class="ws-item">'
+    +'<div class="ws-factor">Savings Buffer</div>'
+    +'<div class="'+bufCls+'">'+bufDisp+'</div>'
+    +'<div class="ws-label">'+bufLabel+' \u2014 '+(bufMo>=6?'covers 6+ months of outflow':'target is 6 months')+'</div>'
+    +'</div>'
+    +'<div class="ws-item">'
+    +'<div class="ws-factor">Stress Survival</div>'
+    +'<div class="'+srvCls+'">'+srvDisp+'</div>'
+    +'<div class="ws-label">'+srvLabel+' \u2014 under '+shP+'% income drop</div>'
+    +'</div>'
+    +'</div>';
 }
 
 /** Core Truth — brutally honest behavioral insight */
