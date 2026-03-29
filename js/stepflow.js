@@ -331,45 +331,256 @@
     var grid = $("sfReviewGrid");
     if (!grid) return;
 
-    var rows = [
-      { l: "Mode", v: userIntent === "new" ? "New Loan Check" : "Financial Health Check" },
-      { l: "Net Monthly Income", v: fmtINR($("income") && $("income").value) },
-      { l: "Income Type", v: ($("incomeType") && $("incomeType").value) || "salaried" },
-      { l: "Income Shock", v: (($("incomeShock") && $("incomeShock").value) || "30") + "%" },
-      { l: "Annual Bonus", v: fmtINR($("annualBonus") && $("annualBonus").value) },
-      { l: "Secured EMIs", v: fmtINR($("securedEMI") && $("securedEMI").value) },
-      { l: "Unsecured EMIs", v: fmtINR($("unsecuredEMI") && $("unsecuredEMI").value) },
-      { l: "Pending Tenure (existing)", v: (($("existingTenure") && $("existingTenure").value) || "0") + " months" },
-      { l: "Dependents", v: ($("dependents") && $("dependents").value) || "0" },
-      { l: "Essential Expenses", v: fmtINR($("essentialExp") && $("essentialExp").value) },
-      { l: "Lifestyle", v: fmtINR($("lifestyleExp") && $("lifestyleExp").value) },
-      { l: "Semi-Fixed", v: fmtINR($("semiFixedExp") && $("semiFixedExp").value) },
-      { l: "Cash + Bank", v: fmtINR($("cashBalance") && $("cashBalance").value) },
-      { l: "Fixed Deposits", v: fmtINR($("fdBalance") && $("fdBalance").value) },
-      { l: "Other Investments", v: fmtINR($("otherSavings") && $("otherSavings").value) }
+    /* ── Field format helper ── */
+    function rvFmt(val, fmt) {
+      var n = parseFloat(val) || 0;
+      if (fmt === "inr")    return n > 0 ? "₹" + n.toLocaleString("en-IN") : "₹0";
+      if (fmt === "pct")    return (n || "—") + "%";
+      if (fmt === "months") return n > 0 ? n + " mo" : "—";
+      return val || "—";
+    }
+
+    /* ── Quick Preview: EMI + FOIR ── */
+    function rvUpdatePreview() {
+      var prev = $("rvPreview");
+      if (!prev) return;
+      var inc = parseFloat($("income") && $("income").value) || 0;
+      if (inc <= 0) { prev.innerHTML = ""; return; }
+      var html = "";
+      var sec  = parseFloat($("securedEMI")   && $("securedEMI").value)   || 0;
+      var usec = parseFloat($("unsecuredEMI") && $("unsecuredEMI").value) || 0;
+      if (userIntent === "new") {
+        var la = parseFloat($("loanAmount")   && $("loanAmount").value)   || 0;
+        var ir = parseFloat($("interestRate") && $("interestRate").value) || 0;
+        var tn = parseFloat($("tenure")       && $("tenure").value)       || 0;
+        if (la > 0 && ir > 0 && tn > 0) {
+          var r   = (ir / 12) / 100;
+          var emi = la * r * Math.pow(1 + r, tn) / (Math.pow(1 + r, tn) - 1);
+          var total = emi + sec + usec;
+          var ratio = (total / inc * 100).toFixed(1);
+          var cls = ratio <= 40 ? "rv-prev-ok" : ratio <= 55 ? "rv-prev-warn" : "rv-prev-bad";
+          html = '<span class="rv-prev-label">Est. New EMI</span>' +
+                 '<span class="rv-prev-val">₹' + Math.round(emi).toLocaleString("en-IN") + '</span>' +
+                 '<span class="rv-prev-sep">·</span>' +
+                 '<span class="rv-prev-label">FOIR</span>' +
+                 '<span class="rv-prev-val ' + cls + '">' + ratio + '%</span>';
+        }
+      } else {
+        var total2 = sec + usec;
+        if (total2 > 0) {
+          var ratio2 = (total2 / inc * 100).toFixed(1);
+          var cls2 = ratio2 <= 40 ? "rv-prev-ok" : ratio2 <= 55 ? "rv-prev-warn" : "rv-prev-bad";
+          html = '<span class="rv-prev-label">Total EMI</span>' +
+                 '<span class="rv-prev-val">₹' + total2.toLocaleString("en-IN") + '</span>' +
+                 '<span class="rv-prev-sep">·</span>' +
+                 '<span class="rv-prev-label">FOIR</span>' +
+                 '<span class="rv-prev-val ' + cls2 + '">' + ratio2 + '%</span>';
+        }
+      }
+      prev.innerHTML = html;
+    }
+
+    /* ── Validation status ── */
+    function rvCheckValid() {
+      var statusEl = $("rvStatus");
+      if (!statusEl) return;
+      var issues = [];
+      var inc = parseFloat($("income") && $("income").value) || 0;
+      if (inc <= 0) issues.push("income missing");
+      if (userIntent === "new") {
+        if (!(parseFloat($("loanAmount")   && $("loanAmount").value)   > 0)) issues.push("loan amount");
+        if (!(parseFloat($("interestRate") && $("interestRate").value) > 0)) issues.push("interest rate");
+        if (!(parseFloat($("tenure")       && $("tenure").value)       > 0)) issues.push("tenure");
+        if (!(parseFloat($("propertyValue")&& $("propertyValue").value)> 0)) issues.push("property value");
+      }
+      if (issues.length === 0) {
+        statusEl.innerHTML = '<span class="rv-status-ok">✔ All fields look good</span>';
+      } else {
+        statusEl.innerHTML = '<span class="rv-status-warn">⚠ Missing: ' + issues.join(", ") + '</span>';
+      }
+    }
+
+    /* ── Inline edit wiring ── */
+    function rvWireEdit(valueEl, fieldId, fieldType, fmt, options) {
+      valueEl.classList.add("rv-editable");
+      valueEl.addEventListener("click", function () {
+        if (valueEl.classList.contains("rv-editing")) return;
+        valueEl.classList.add("rv-editing");
+        var realEl   = $(fieldId);
+        var savedVal = realEl ? realEl.value : "";
+        var inp;
+        if (fieldType === "select" && options) {
+          inp = document.createElement("select");
+          inp.className = "rv-inline-input";
+          for (var o = 0; o < options.length; o++) {
+            var opt = document.createElement("option");
+            opt.value       = options[o][0];
+            opt.textContent = options[o][1];
+            if (options[o][0] === savedVal) opt.selected = true;
+            inp.appendChild(opt);
+          }
+        } else {
+          inp = document.createElement("input");
+          inp.type      = "text";
+          inp.className = "rv-inline-input";
+          inp.value     = parseFloat(savedVal) || "";
+        }
+        valueEl.innerHTML = "";
+        valueEl.appendChild(inp);
+        inp.focus();
+        if (inp.select) inp.select();
+
+        function saveEdit() {
+          if (!valueEl.classList.contains("rv-editing")) return;
+          valueEl.classList.remove("rv-editing");
+          var newVal = inp.value;
+          if (realEl) realEl.value = newVal;
+          if (fieldType === "select" && options) {
+            var label = newVal;
+            for (var k = 0; k < options.length; k++) {
+              if (options[k][0] === newVal) { label = options[k][1]; break; }
+            }
+            valueEl.textContent = label || "—";
+          } else {
+            valueEl.textContent = rvFmt(newVal, fmt);
+          }
+          rvUpdatePreview();
+          rvCheckValid();
+          updateLiveIndicators();
+        }
+
+        inp.addEventListener("blur", saveEdit);
+        inp.addEventListener("keydown", function (e) {
+          if (e.key === "Enter")  { inp.blur(); }
+          if (e.key === "Escape") {
+            valueEl.classList.remove("rv-editing");
+            if (fieldType === "select" && options) {
+              var label2 = savedVal;
+              for (var k2 = 0; k2 < options.length; k2++) {
+                if (options[k2][0] === savedVal) { label2 = options[k2][1]; break; }
+              }
+              valueEl.textContent = label2 || "—";
+            } else {
+              valueEl.textContent = rvFmt(savedVal, fmt);
+            }
+          }
+        });
+      });
+    }
+
+    /* ── Section definitions ── */
+    var sections = [
+      {
+        id: "rv-income", title: "Income", icon: "₹",
+        fields: [
+          { l: "Net Monthly Income", id: "income",      type: "number", fmt: "inr" },
+          { l: "Income Type",        id: "incomeType",  type: "select", fmt: "raw",
+            options: [["salaried","Salaried"],["self_employed","Self-Employed"],["business","Business"]] },
+          { l: "Income Shock",       id: "incomeShock", type: "number", fmt: "pct" },
+          { l: "Annual Bonus",       id: "annualBonus", type: "number", fmt: "inr" }
+        ]
+      },
+      {
+        id: "rv-emis", title: "EMIs & Expenses", icon: "⊟",
+        fields: [
+          { l: "Secured EMIs",       id: "securedEMI",   type: "number", fmt: "inr" },
+          { l: "Unsecured EMIs",     id: "unsecuredEMI", type: "number", fmt: "inr" },
+          { l: "Existing Tenure",    id: "existingTenure",type:"number", fmt: "months" },
+          { l: "Essential Expenses", id: "essentialExp", type: "number", fmt: "inr" },
+          { l: "Lifestyle Expenses", id: "lifestyleExp", type: "number", fmt: "inr" },
+          { l: "Semi-Fixed Expenses",id: "semiFixedExp", type: "number", fmt: "inr" }
+        ]
+      },
+      {
+        id: "rv-savings", title: "Savings & Liquidity", icon: "◈",
+        fields: [
+          { l: "Cash + Bank",        id: "cashBalance",  type: "number", fmt: "inr" },
+          { l: "Fixed Deposits",     id: "fdBalance",    type: "number", fmt: "inr" },
+          { l: "Other Investments",  id: "otherSavings", type: "number", fmt: "inr" },
+          { l: "Dependents",         id: "dependents",   type: "number", fmt: "raw" }
+        ]
+      }
     ];
 
     if (userIntent === "new") {
-      rows.push(
-        { l: "Loan Amount", v: fmtINR($("loanAmount") && $("loanAmount").value) },
-        { l: "Loan Purpose", v: ($("loanPurpose") && $("loanPurpose").value) || "home" },
-        { l: "Interest Rate", v: (($("interestRate") && $("interestRate").value) || "0") + "%" },
-        { l: "Tenure", v: (($("tenure") && $("tenure").value) || "0") + " months" },
-        { l: "Rate Type", v: ($("rateType") && $("rateType").value) || "floating" },
-        { l: "Months Paid", v: ($("monthsPaid") && $("monthsPaid").value) || "0" },
-        { l: "Property Value", v: fmtINR($("propertyValue") && $("propertyValue").value) },
-        { l: "Down Payment", v: fmtINR($("downPayment") && $("downPayment").value) }
-      );
+      sections.push({
+        id: "rv-loan", title: "New Loan", icon: "⬡",
+        fields: [
+          { l: "Loan Amount",         id: "loanAmount",   type: "number", fmt: "inr" },
+          { l: "Interest Rate",       id: "interestRate", type: "number", fmt: "pct" },
+          { l: "Tenure (months)",     id: "tenure",       type: "number", fmt: "months" },
+          { l: "Loan Purpose",        id: "loanPurpose",  type: "select", fmt: "raw",
+            options: [["home","Home Loan"],["car","Car Loan"],["personal","Personal"],["education","Education"],["business","Business"]] },
+          { l: "Rate Type",           id: "rateType",     type: "select", fmt: "raw",
+            options: [["floating","Floating"],["fixed","Fixed"]] },
+          { l: "Months Already Paid", id: "monthsPaid",   type: "number", fmt: "months" }
+        ]
+      });
+      sections.push({
+        id: "rv-property", title: "Property", icon: "⌂",
+        fields: [
+          { l: "Property Value", id: "propertyValue", type: "number", fmt: "inr" },
+          { l: "Down Payment",   id: "downPayment",   type: "number", fmt: "inr" }
+        ]
+      });
     }
 
+    /* ── Build HTML ── */
     var html = "";
-    for (var i = 0; i < rows.length; i++) {
-      html += '<div class="sf-review-row">' +
-        '<span class="sf-review-label">' + rows[i].l + '</span>' +
-        '<span class="sf-review-value">' + rows[i].v + '</span>' +
-        '</div>';
+    for (var s = 0; s < sections.length; s++) {
+      var sec = sections[s];
+      html += '<div class="rv-card" id="' + sec.id + '">';
+      html += '<div class="rv-card-header">' +
+              '<span class="rv-card-icon">' + sec.icon + '</span>' +
+              '<span class="rv-card-title">' + sec.title + '</span>' +
+              '</div>';
+      html += '<div class="rv-fields-grid">';
+      for (var f = 0; f < sec.fields.length; f++) {
+        var fld    = sec.fields[f];
+        var realEl = $(fld.id);
+        var rawVal = realEl ? realEl.value : "";
+        var disp   = "";
+        if (fld.type === "select" && fld.options) {
+          disp = rawVal;
+          for (var op = 0; op < fld.options.length; op++) {
+            if (fld.options[op][0] === rawVal) { disp = fld.options[op][1]; break; }
+          }
+          if (!disp) disp = "—";
+        } else {
+          disp = rvFmt(rawVal, fld.fmt);
+        }
+        html += '<div class="rv-field">' +
+                '<div class="rv-field-label">' + fld.l + '</div>' +
+                '<div class="rv-field-value" data-fid="' + fld.id + '" data-fmt="' + fld.fmt + '">' + disp + '</div>' +
+                '</div>';
+      }
+      html += '</div></div>';
     }
     grid.innerHTML = html;
+
+    /* ── Wire inline editing after DOM insert ── */
+    var allValueEls = grid.querySelectorAll(".rv-field-value");
+    for (var ci = 0; ci < allValueEls.length; ci++) {
+      var vEl  = allValueEls[ci];
+      var fid  = vEl.getAttribute("data-fid");
+      var ffmt = vEl.getAttribute("data-fmt");
+      var fcfg = null;
+      outer: for (var ss = 0; ss < sections.length; ss++) {
+        for (var ff = 0; ff < sections[ss].fields.length; ff++) {
+          if (sections[ss].fields[ff].id === fid) { fcfg = sections[ss].fields[ff]; break outer; }
+        }
+      }
+      if (fcfg) rvWireEdit(vEl, fid, fcfg.type, ffmt, fcfg.options || null);
+    }
+
+    /* ── Wire CTA button → existing goNext flow ── */
+    var ctaBtn = $("rvCtaBtn");
+    if (ctaBtn) {
+      ctaBtn.onclick = function () { if (sfBtnNext) sfBtnNext.click(); };
+    }
+
+    rvUpdatePreview();
+    rvCheckValid();
   }
 
   /* ═══════════════════════════════════════════════

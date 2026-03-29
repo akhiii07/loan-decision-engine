@@ -263,11 +263,15 @@
 
     <!-- ══════ STEP 7 — Review ══════ -->
     <div class="sf-step" id="sf-step-review">
-      <div class="form-section">
-        <div class="section-label">Review Your Inputs</div>
-        <p class="sf-microcopy">Double-check everything before we run the analysis.</p>
-        <div class="sf-review-grid" id="sfReviewGrid"></div>
+      <div class="rv-topbar">
+        <div class="rv-status-col">
+          <div class="rv-topbar-label">Review &amp; Confirm</div>
+          <div class="rv-status" id="rvStatus">Checking inputs…</div>
+        </div>
+        <div class="rv-preview" id="rvPreview"></div>
+        <button type="button" class="rv-cta-btn" id="rvCtaBtn">▶ Analyze</button>
       </div>
+      <div id="sfReviewGrid"></div>
     </div>
 
     <!-- Navigation buttons -->
