@@ -76,53 +76,41 @@ function renderResults(ctx) {
   el('expand-survival').innerHTML=buildSurvivalExpand(ctx,ttf,theoSurv,realSurv,shP);
   el('expand-emi').innerHTML=buildEmiExpand(base,iShk,inp,stEmiR,stEmiDispStr,stEmiClass,elOk,elig);
 
-  // ═══ SECTION 4: WORST CASE ═══
-  el('wcShockLabel').textContent=shP+'% income drop scenario';
-
-  var wg='';
-  wg+='<div class="wc-stat"><div class="wcs-val">'+formatRupees(iShk.shockedIncome)+'</div><div class="wcs-label">Shocked Income</div><div class="wcs-delta">from '+formatRupees(inp.income)+'</div></div>';
-  wg+=iShk.deficit>0
-    ?'<div class="wc-stat"><div class="wcs-val bad">\u2212'+formatRupees(iShk.deficit)+'</div><div class="wcs-label">Monthly Gap</div><div class="wcs-delta">shortfall per month</div></div>'
-    :'<div class="wc-stat"><div class="wcs-val ok">Surplus</div><div class="wcs-label">Monthly Gap</div><div class="wcs-delta">still positive</div></div>';
-  var survTxt=zS?'Instant':(isFinite(realSurv)?'~'+Math.floor(realSurv)+' mo':'Indefinite');
-  var survCls2=zS?'bad':(isFinite(realSurv)&&realSurv<6?'bad':isFinite(realSurv)&&realSurv<12?'warn':'ok');
-  wg+='<div class="wc-stat"><div class="wcs-val '+survCls2+'">'+survTxt+'</div><div class="wcs-label">Runway</div><div class="wcs-delta">realistic estimate</div></div>';
-  wg+='<div class="wc-stat"><div class="wcs-val '+stEmiClass+'">'+stEmiDispStr+'</div><div class="wcs-label">Stressed EMI</div><div class="wcs-delta">of shocked income</div></div>';
-  el('wcStatsGrid').innerHTML=wg;
-
-  var impacts=generateLifeImpact(ctx);
-  el('wcLifeImpact').innerHTML=impacts.map(function(t){return'<div class="wc-life-item">'+t+'</div>';}).join('');
-
-  // ═══ SECTION 5: TOP RISKS ═══
-  var topRisks=pickTopRisks(allFlags,4);
-  if(topRisks.length>0){
-    el('topRisksTags').innerHTML=topRisks.map(function(f){return'<span class="risk-tag risk-'+f.level+'">'+f.text+'</span>';}).join('');
-    el('top-risks').style.display='block';
-  } else {
-    el('topRisksTags').innerHTML='<span class="risk-tag risk-ok">No critical risks</span>';
-    el('top-risks').style.display='block';
+  // ═══ SECTION 4: BIGGEST IMPACT MOVE ═══
+  var biEl=el('biAction'),biImpEl=el('biImpacts');
+  if(biEl&&biImpEl){
+    var topD=delta&&delta.length>0?delta[0]:null;
+    if(topD){
+      biEl.textContent=topD.type;
+      var biBullets=generateBiggestImpactBullets(topD,ctx);
+      biImpEl.innerHTML='<div class="bi-desc">\u2192 '+topD.message+'</div>'+biBullets.map(function(b){return'<div class="bi-bullet"><span class="bi-dot">\u2713</span>'+b+'</div>';}).join('');
+    } else {
+      biEl.textContent='Regular Prepayments';
+      biImpEl.innerHTML='<div class="bi-desc">\u2192 Reduce total interest and shorten loan tenure</div><div class="bi-bullet"><span class="bi-dot">\u2713</span>Saves years and significant interest cost</div>';
+    }
   }
 
-  // ═══ SECTION 6: DECISION DELTA ═══
-  el('ddHeader').textContent='To become '+(verdict==='SAFE'?'SAFER':'SAFE');
-  el('ddSubtitle').textContent=delta&&delta.length>0
-    ?'Ranked by impact — implement in order for fastest improvement'
-    :'Your finances are healthy. Consider these optimizations.';
-  var ddH='';
-  if(delta&&delta.length>0){
-    delta.slice(0,3).forEach(function(d,i){
-      var isPrimary=i===0;
-      ddH+='<div class="dd-option'+(isPrimary?' dd-primary':'')+'"><div class="dd-rank-col">'
-        +(isPrimary?'<div class="dd-star">\u2605</div>':'')
-        +'<div class="dd-num">'+(i+1)+'</div></div>'
-        +'<div class="dd-body"><div class="dd-type">'
-        +(isPrimary?'<span class="dd-primary-tag">Best Option</span>':'')
-        +d.type+'</div><div class="dd-message">\u2192 '+d.message+'</div></div></div>';
-    });
-  } else {
-    ddH='<div class="dd-option dd-primary"><div class="dd-rank-col"><div class="dd-star">\u2605</div><div class="dd-num">1</div></div><div class="dd-body"><div class="dd-type"><span class="dd-primary-tag">Optimize</span>Consider prepayments</div><div class="dd-message">\u2192 Reduces total interest and shortens loan tenure</div></div></div>';
+  // ═══ SECTION 5: IF YOU DO NOTHING ═══
+  var ifnEl=el('ifnBullets');
+  if(ifnEl) ifnEl.innerHTML=generateIfNothingBullets(ctx).map(function(t){return'<div class="ifn-item">\u26a0\ufe0e '+t+'</div>';}).join('');
+
+  // ═══ SECTION 6: LIFE MEANING ═══
+  var lmEl=el('lmItems');
+  if(lmEl) lmEl.innerHTML=generateLifeImpact(ctx).map(function(t){return'<div class="lm-item">'+t+'</div>';}).join('');
+
+  // ═══ SECTION 7: FINAL VERDICT ═══
+  var fvVEl=el('fvVerdict'),fvREl=el('fvReason'),fvCEl=el('fvConfidence');
+  var fvSection=el('final-verdict');
+  if(fvSection) fvSection.className='v-'+verdict;
+  if(fvVEl&&fvREl&&fvCEl){
+    var fvLabel=verdict==='SAFE'?'SAFE':verdict==='MODERATE'?'CONDITIONAL':'NOT SAFE';
+    fvVEl.textContent=fvLabel;
+    fvVEl.className='fv-verdict-text v-'+verdict;
+    fvREl.textContent=generateFinalReason(ctx);
+    var confText=score>=75?'High confidence \u2014 result is definitive':score>=50?'Moderate confidence \u2014 borderline case':'Low confidence \u2014 multiple risk factors active';
+    fvCEl.textContent=confText;
+    fvCEl.className='fv-confidence '+(score>=75?'c-ok':score>=50?'c-warn':'c-bad');
   }
-  el('ddOptions').innerHTML=ddH;
 
   // ═══ COMPAT / EXPANDABLE TARGETS ═══
   el('scoreBlock').innerHTML='<div class="score-hero-ring v-'+verdict+'">'+score+'</div>';
@@ -239,7 +227,7 @@ function renderResults(ctx) {
   cont.classList.add('results-full');
   el('resultsPanel').scrollIntoView({behavior:'smooth',block:'start'});
   window._ldeCtx=ctx;
-  initSimSliders(ctx);
+  initWhatIfLab(ctx);
 }
 
 /** Animated number counter */
@@ -293,19 +281,23 @@ function computeSimScore(adjFOIR,adjBuf,adjTTF){
   return Math.max(0,Math.min(100,Math.round(s)));
 }
 
-/** Initialize simulation sliders */
-function initSimSliders(ctx){
+/** What If Lab — dual-state live simulation */
+function initWhatIfLab(ctx){
   var inp=ctx.inp,base=ctx.base;
   var isNew=(inp.newEMI>0);
   var shockPct=ctx.incomeShock.shockPct;
+  var origScore=ctx.score;
+  var realSurv=ctx.realisticSurvival;
+  var zS=ctx.zeroSavings;
 
-  var loanWrap=el('simLoanWrap');
+  // Wire up loan slider visibility
+  var loanWrap=el('wilLoanWrap');
   if(loanWrap) loanWrap.style.display=isNew?'flex':'none';
 
-  var sLoan=el('simLoan'),sSav=el('simSavings'),sInc=el('simIncome');
+  var sLoan=el('wilLoan'),sSav=el('wilSavings'),sInc=el('wilIncome');
   if(!sLoan||!sSav||!sInc) return;
 
-  // Set ranges
+  // Calibrate slider ranges
   var la=inp.loanAmount||0;
   sLoan.min=Math.round(la*0.3/10000)*10000;
   sLoan.max=Math.round(la*1.8/10000)*10000||5000000;
@@ -314,7 +306,7 @@ function initSimSliders(ctx){
 
   var sv=inp.savings||0;
   sSav.min=0;
-  sSav.max=Math.round(Math.max(sv*2.5,300000)/10000)*10000;
+  sSav.max=Math.round(Math.max(sv*2.5,500000)/10000)*10000;
   sSav.step=Math.max(10000,Math.round(sv*0.04/10000)*10000)||50000;
   sSav.value=sv;
 
@@ -325,76 +317,135 @@ function initSimSliders(ctx){
   sInc.value=inc;
 
   function fmtK(n){return n>=100000?'\u20b9'+(n/100000).toFixed(1)+'L':'\u20b9'+Math.round(n/1000)+'K';}
+  function mRow(label,val,cls){return'<div class="wil-metric"><span class="wil-m-label">'+label+'</span><span class="wil-m-val '+cls+'">'+val+'</span></div>';}
+
+  // Populate CURRENT state (static)
+  var currScEl=el('wilCurrScore');
+  var currMtEl=el('wilCurrMetrics');
+  if(currScEl){
+    currScEl.textContent=origScore;
+    currScEl.className='wil-score v-'+ctx.verdict;
+  }
+  if(currMtEl){
+    var ttfCurr=zS?'0 mo':(isFinite(realSurv)?'~'+Math.floor(realSurv)+' mo':'\u221e');
+    currMtEl.innerHTML=
+      mRow('EMI Ratio',formatPct(base.emiRatio),emiColor(base.emiRatio,inp.incomeType))
+      +mRow('Buffer',(isFinite(base.buffer)?base.buffer.toFixed(1)+' mo':'\u221e'),bufferColor(base.buffer))
+      +mRow('Time to Failure',ttfCurr,zS?'bad':survivalColor(realSurv));
+  }
 
   function update(){
     var adjLoan=isNew?parseFloat(sLoan.value)||0:la;
-    var adjSav=parseFloat(sSav.value)||0;
-    var adjInc=parseFloat(sInc.value)||1;
+    var adjSav =parseFloat(sSav.value)||0;
+    var adjInc =parseFloat(sInc.value)||1;
 
-    if(el('simLoanVal')) el('simLoanVal').textContent=fmtK(adjLoan);
-    if(el('simSavingsVal')) el('simSavingsVal').textContent=fmtK(adjSav);
-    if(el('simIncomeVal')) el('simIncomeVal').textContent=fmtK(adjInc);
+    if(el('wilLoanVal'))    el('wilLoanVal').textContent=fmtK(adjLoan);
+    if(el('wilSavingsVal')) el('wilSavingsVal').textContent=fmtK(adjSav);
+    if(el('wilIncomeVal'))  el('wilIncomeVal').textContent=fmtK(adjInc);
 
-    // Compute adjusted EMI for new loan
     var adjEMI=0;
     if(isNew&&adjLoan>0&&inp.rate>0&&inp.tenure>0){
       var r=(inp.rate/12)/100;
       adjEMI=adjLoan*r*Math.pow(1+r,inp.tenure)/(Math.pow(1+r,inp.tenure)-1);
     }
-    // Replace newEMI in outflow, keep rest constant
-    var adjOutflow=adjEMI+(base.outflow-(inp.newEMI||0));
-    adjOutflow=Math.max(adjOutflow,1);
+    var adjOutflow=Math.max(adjEMI+(base.outflow-(inp.newEMI||0)),1);
     var adjFOIR=adjOutflow/adjInc;
     var adjBuf=adjSav/adjOutflow;
-    var shockInc=adjInc*(1-shockPct/100);
-    var shockNet=shockInc-adjOutflow;
+    var shockNet=adjInc*(1-shockPct/100)-adjOutflow;
     var adjTTF=shockNet>=0?Infinity:(adjSav>0?adjSav/Math.abs(shockNet):0);
-
-    var foirPct=Math.round(adjFOIR*100);
-    var origFoir=Math.round(base.emiRatio*100);
-    var foirDelta=foirPct-origFoir;
-    var foirCls=adjFOIR<=0.4?'ok':adjFOIR<=0.5?'warn':'bad';
-
-    var bufStr=isFinite(adjBuf)?adjBuf.toFixed(1)+' mo':'\u221e';
-    var bufCls=bufferColor(adjBuf);
-
-    var ttfStr=(!isFinite(adjTTF)||adjTTF>36)?'Stable':(adjTTF<1?'< 1 mo':'~'+Math.floor(adjTTF)+' mo');
-    var ttfCls=(!isFinite(adjTTF)||adjTTF>=12)?'ok':(adjTTF>=6?'warn':'bad');
-
     var simScore=computeSimScore(adjFOIR,adjBuf,adjTTF);
-    var origScore=ctx.score;
-    var sdelta=simScore-origScore;
-    var sdeltaStr=(sdelta>0?'+':'')+sdelta;
-    var sdeltaCls=sdelta>5?'ok':sdelta<-5?'bad':'muted';
-    var sScoreCls=simScore>=70?'ok':simScore>=50?'warn':'bad';
+    var simVerdict=simScore>=70?'SAFE':simScore>=50?'MODERATE':simScore>=35?'RISKY':'DANGEROUS';
 
-    var liveEl=el('simLiveMetrics');
-    if(!liveEl) return;
-    liveEl.innerHTML=
-      '<div class="sim-badge"><div class="sim-badge-val '+foirCls+'">'+foirPct+'%</div>'
-      +'<div class="sim-badge-label">EMI Ratio</div>'
-      +(foirDelta!==0?'<div class="sim-badge-delta '+(foirDelta>0?'bad':'ok')+'">'+(foirDelta>0?'+':'')+foirDelta+'%p</div>':'')
-      +'</div>'
-      +'<div class="sim-badge"><div class="sim-badge-val '+bufCls+'">'+bufStr+'</div>'
-      +'<div class="sim-badge-label">Safety Buffer</div>'
-      +'</div>'
-      +'<div class="sim-badge"><div class="sim-badge-val '+ttfCls+'">'+ttfStr+'</div>'
-      +'<div class="sim-badge-label">Time to Failure</div>'
-      +'</div>'
-      +'<div class="sim-badge sim-score-badge"><div class="sim-badge-val '+sScoreCls+'">'+simScore+'</div>'
-      +'<div class="sim-badge-label">Sim Score</div>'
-      +'<div class="sim-badge-delta '+sdeltaCls+'">'+sdeltaStr+'</div>'
-      +'</div>';
+    // Update SIMULATED state
+    var impScEl=el('wilImpScore');
+    if(impScEl){impScEl.textContent=simScore;impScEl.className='wil-score v-'+simVerdict;}
+
+    var impMtEl=el('wilImpMetrics');
+    if(impMtEl){
+      var ttfSim=(!isFinite(adjTTF)||adjTTF>36)?'\u221e':(adjTTF<1?'<1 mo':'~'+Math.floor(adjTTF)+' mo');
+      var ttfSimCls=(!isFinite(adjTTF)||adjTTF>=12)?'ok':(adjTTF>=6?'warn':'bad');
+      impMtEl.innerHTML=
+        mRow('EMI Ratio',Math.round(adjFOIR*100)+'%',adjFOIR<=0.4?'ok':adjFOIR<=0.5?'warn':'bad')
+        +mRow('Buffer',(isFinite(adjBuf)?adjBuf.toFixed(1)+' mo':'\u221e'),bufferColor(adjBuf))
+        +mRow('Time to Failure',ttfSim,ttfSimCls);
+    }
+
+    // Delta pills
+    var deltaEl=el('wilDelta');
+    if(deltaEl){
+      var sd=simScore-origScore;
+      var fd=Math.round(base.emiRatio*100)-Math.round(adjFOIR*100);
+      var bd=isFinite(adjBuf)&&isFinite(base.buffer)?(adjBuf-base.buffer).toFixed(1):null;
+      var dHtml='';
+      if(Math.abs(sd)>=1) dHtml+='<div class="wil-delta-pill '+(sd>0?'dp-pos':'dp-neg')+'">'+(sd>0?'+':'')+sd+' score</div>';
+      if(fd!==0) dHtml+='<div class="wil-delta-pill '+(fd>0?'dp-pos':'dp-neg')+'">'+(fd>0?'-':'+')+Math.abs(fd)+'% EMI</div>';
+      if(bd!==null&&Math.abs(parseFloat(bd))>=0.5) dHtml+='<div class="wil-delta-pill '+(parseFloat(bd)>0?'dp-pos':'dp-neg')+'">'+(parseFloat(bd)>0?'+':'')+bd+' mo</div>';
+      deltaEl.innerHTML=dHtml;
+    }
   }
 
   sLoan.addEventListener('input',update);
   sSav.addEventListener('input',update);
   sInc.addEventListener('input',update);
 
-  var rBtn=el('simReset');
+  var rBtn=el('wilReset');
   if(rBtn){rBtn.onclick=function(){sLoan.value=la;sSav.value=sv;sInc.value=inc;update();};}
 
   update();
+}
+
+/** Biggest impact move — bullet impacts */
+function generateBiggestImpactBullets(d,ctx){
+  var bullets=[],tp=(d.type||'').toLowerCase(),base=ctx.base,realSurv=ctx.realisticSurvival;
+  if(tp.indexOf('sav')>=0){
+    bullets.push('Extends survival runway immediately');
+    if(isFinite(realSurv)&&realSurv<12) bullets.push('Current runway: ~'+Math.floor(realSurv)+' months — this directly adds to it');
+  } else if(tp.indexOf('loan')>=0||tp.indexOf('emi')>=0||tp.indexOf('reduce')>=0){
+    bullets.push('Frees up '+(Math.round(base.emiRatio*100))+'% of income locked in EMI');
+    bullets.push('Widens the gap between income and outflow');
+  } else if(tp.indexOf('income')>=0){
+    bullets.push('Directly improves all ratios simultaneously');
+    bullets.push('Reduces your FOIR and builds resilience');
+  } else {
+    bullets.push('Reduces your risk score immediately');
+    bullets.push('Addresses the highest-impact gap in your profile');
+  }
+  return bullets.slice(0,2);
+}
+
+/** If you do nothing — consequence bullets */
+function generateIfNothingBullets(ctx){
+  var items=[],base=ctx.base,inp=ctx.inp,realSurv=ctx.realisticSurvival,shP=ctx.incomeShock.shockPct;
+  if(ctx.zeroSavings) items.push('Immediate default on any income drop — zero buffer exists');
+  else if(isFinite(realSurv)&&realSurv<3) items.push('Savings exhausted in ~'+Math.floor(realSurv)+' months under a '+shP+'% income shock');
+  else if(isFinite(realSurv)&&realSurv<6) items.push('Only '+Math.floor(realSurv)+' months of runway — one disruption breaks your finances');
+  if(base.emiRatio>0.5) items.push('EMI consumes '+Math.round(base.emiRatio*100)+'% of income — no capacity to save or invest');
+  else if(base.emiRatio>0.4) items.push('High EMI load ('+Math.round(base.emiRatio*100)+'%) leaves very little monthly flexibility');
+  if(base.deficit>0) items.push('Already spending '+formatRupees(base.deficit)+'/mo more than you earn — deficit compounds');
+  if(ctx.incomeShock.deficit>0&&!ctx.zeroSavings) items.push('Income shock creates '+formatRupees(ctx.incomeShock.deficit)+'/mo shortfall every month until savings are gone');
+  if(ctx.rateShock&&ctx.rateShock.negAmort) items.push('Rate increase triggers debt trap — loan balance grows faster than repayments');
+  if(items.length===0){
+    items.push('Finances remain on current trajectory');
+    items.push('Prepayments could still save years of interest cost');
+  }
+  return items.slice(0,4);
+}
+
+/** Final verdict reason */
+function generateFinalReason(ctx){
+  var verdict=ctx.verdict,base=ctx.base,emiPct=Math.round(base.emiRatio*100);
+  var realSurv=ctx.realisticSurvival,shP=ctx.incomeShock.shockPct;
+  if(verdict==='DANGEROUS'){
+    if(base.deficit>0) return 'Outflow already exceeds income before any shock — loan not viable at current income';
+    if(ctx.zeroSavings) return 'Zero savings means any income disruption triggers immediate default';
+    return 'EMI at '+emiPct+'% combined with a '+shP+'% income shock creates a financial collapse scenario';
+  }
+  if(verdict==='RISKY'){
+    if(isFinite(realSurv)&&realSurv<6) return 'Only ~'+Math.floor(realSurv)+' months of survival runway — income dependency is critically high';
+    return emiPct+'% EMI with limited savings buffer leaves insufficient room for income volatility';
+  }
+  if(verdict==='MODERATE') return 'Manageable but EMI at '+emiPct+'% limits flexibility — income stability is essential';
+  return 'EMI at '+emiPct+'% with adequate savings buffer — loan is financially sound under modelled scenarios';
 }
 
 /** Core Truth — brutally honest behavioral insight */

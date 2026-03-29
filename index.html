@@ -367,84 +367,83 @@
     <div class="metric-expand-panel" id="expand-survival" style="display:none"></div>
     <div class="metric-expand-panel" id="expand-emi" style="display:none"></div>
 
-    <!-- SECTION 4: WORST CASE -->
-    <div id="worst-case">
-      <div class="wc-header">
-        <div class="wc-badge">&#9888; WORST CASE</div>
-        <div class="wc-shock-label" id="wcShockLabel"></div>
-      </div>
-      <div class="wc-stats-grid" id="wcStatsGrid"></div>
-      <div class="wc-life-block">
-        <div class="wc-life-title">What this means for your life</div>
-        <div id="wcLifeImpact" class="wc-life-list"></div>
-      </div>
-    </div>
-
-    <!-- SECTION 5: WHAT WILL BREAK YOU -->
-    <div id="top-risks" style="display:none">
-      <div class="tr-header">What Will Break You</div>
-      <div class="tr-tags" id="topRisksTags"></div>
-    </div>
-
-    <!-- SECTION 6: DECISION DELTA -->
-    <div id="decision-delta">
-      <div class="dd-header" id="ddHeader"></div>
-      <div class="dd-subtitle" id="ddSubtitle"></div>
-      <div id="ddOptions"></div>
-    </div>
-
-    <!-- SECTION 7: SIMULATION SLIDERS -->
-    <div id="sim-section">
-      <div class="sim-header">
-        <div class="sim-title-col">
-          <span class="sim-title">&#9656; Simulate Changes</span>
-          <span class="sim-subtitle">Adjust values to see instant impact on your score</span>
+    <!-- SECTION 4: WHAT IF LAB -->
+    <div id="what-if-lab">
+      <div class="wil-header">
+        <div class="wil-header-text">
+          <span class="wil-title">WHAT HAPPENS IF YOU CHANGE THIS?</span>
+          <span class="wil-subtitle">Drag sliders — metrics update live</span>
         </div>
-        <button type="button" class="sim-reset-btn" id="simReset">&#8635; Reset</button>
+        <button type="button" class="wil-reset-btn" id="wilReset">&#8635; Reset</button>
       </div>
-      <div class="sim-sliders" id="simSliders">
-        <div class="sim-slider-item" id="simLoanWrap">
-          <div class="sim-slider-head">
-            <span class="sim-slider-label">Loan Amount</span>
-            <span class="sim-slider-val" id="simLoanVal">—</span>
+      <div class="wil-sliders">
+        <div class="wil-slider-item" id="wilLoanWrap">
+          <div class="wil-sl-head">
+            <span class="wil-sl-label">Loan Amount</span>
+            <span class="wil-sl-val" id="wilLoanVal">—</span>
           </div>
-          <input type="range" class="sim-range" id="simLoan" min="0" max="10000000" step="100000" value="0">
+          <input type="range" class="wil-range" id="wilLoan" min="0" max="10000000" step="100000" value="0">
         </div>
-        <div class="sim-slider-item">
-          <div class="sim-slider-head">
-            <span class="sim-slider-label">Liquid Savings</span>
-            <span class="sim-slider-val" id="simSavingsVal">—</span>
+        <div class="wil-slider-item">
+          <div class="wil-sl-head">
+            <span class="wil-sl-label">Liquid Savings</span>
+            <span class="wil-sl-val" id="wilSavingsVal">—</span>
           </div>
-          <input type="range" class="sim-range" id="simSavings" min="0" max="5000000" step="50000" value="0">
+          <input type="range" class="wil-range" id="wilSavings" min="0" max="5000000" step="50000" value="0">
         </div>
-        <div class="sim-slider-item">
-          <div class="sim-slider-head">
-            <span class="sim-slider-label">Monthly Income</span>
-            <span class="sim-slider-val" id="simIncomeVal">—</span>
+        <div class="wil-slider-item">
+          <div class="wil-sl-head">
+            <span class="wil-sl-label">Monthly Income</span>
+            <span class="wil-sl-val" id="wilIncomeVal">—</span>
           </div>
-          <input type="range" class="sim-range" id="simIncome" min="0" max="500000" step="5000" value="0">
+          <input type="range" class="wil-range" id="wilIncome" min="0" max="500000" step="5000" value="0">
         </div>
       </div>
-      <div class="sim-live-metrics" id="simLiveMetrics"></div>
+      <div class="wil-compare">
+        <div class="wil-state wil-current">
+          <div class="wil-state-tag">CURRENT</div>
+          <div class="wil-score" id="wilCurrScore">0</div>
+          <div class="wil-score-sub">/ 100</div>
+          <div class="wil-metrics" id="wilCurrMetrics"></div>
+        </div>
+        <div class="wil-vs-col">
+          <div class="wil-arrow">&#8594;</div>
+          <div class="wil-delta" id="wilDelta"></div>
+        </div>
+        <div class="wil-state wil-simulated">
+          <div class="wil-state-tag">SIMULATED</div>
+          <div class="wil-score" id="wilImpScore">0</div>
+          <div class="wil-score-sub">/ 100</div>
+          <div class="wil-metrics" id="wilImpMetrics"></div>
+        </div>
+      </div>
     </div>
 
-    <!-- SECTION 8: DEEP ANALYSIS (COLLAPSIBLE) -->
-    <div class="expandable" id="detailsExpandable">
-      <div class="expand-header" id="expandToggleBtn">
-        <span>Deep Analysis</span>
-        <span class="expand-arrow" id="expandArrow">&#8595;</span>
-      </div>
-      <div class="expand-content" id="expandContent" style="display:none">
-        <div class="block" id="scenarioBlock"></div>
-        <div class="recovery-block" id="recoveryBlock" style="display:none"></div>
-        <div class="block" id="coreReasonBlock" style="display:none"></div>
-        <div class="block" id="eligBlock"></div>
-        <div class="block" id="prepayBlock" style="display:none"></div>
-        <div class="rp-graph-block" id="crossoverBlock"></div>
-        <div class="rp-graph-block" id="trendBlock" style="display:none"></div>
-        <div class="baseline-ref" id="baselineRef"></div>
-        <div id="perspectiveBlock" style="display:none"></div>
-      </div>
+    <!-- SECTION 5: BIGGEST IMPACT MOVE -->
+    <div id="biggest-impact">
+      <div class="bi-eyebrow">&#9733; BIGGEST IMPACT MOVE</div>
+      <div class="bi-action" id="biAction"></div>
+      <div class="bi-impacts" id="biImpacts"></div>
+    </div>
+
+    <!-- SECTION 6: IF YOU DO NOTHING -->
+    <div id="if-nothing">
+      <div class="ifn-eyebrow">&#9888; IF YOU DO NOTHING</div>
+      <div class="ifn-bullets" id="ifnBullets"></div>
+    </div>
+
+    <!-- SECTION 7: WHAT THIS MEANS FOR YOUR LIFE -->
+    <div id="life-meaning">
+      <div class="lm-eyebrow">WHAT THIS MEANS FOR YOUR LIFE</div>
+      <div class="lm-items" id="lmItems"></div>
+    </div>
+
+    <!-- SECTION 8: FINAL DECISION -->
+    <div id="final-verdict">
+      <div class="fv-label">FINAL DECISION</div>
+      <div class="fv-verdict-text" id="fvVerdict"></div>
+      <div class="fv-reason" id="fvReason"></div>
+      <div class="fv-confidence" id="fvConfidence"></div>
     </div>
 
     <!-- Hidden compat divs -->
