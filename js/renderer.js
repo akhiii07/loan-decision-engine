@@ -235,13 +235,13 @@ function renderResults(ctx) {
   ps+='</div>';el('perspectiveBlock').innerHTML=ps;
 
   // ═══ INTERACTIONS ═══
-  document.querySelectorAll('.metric-row').forEach(function(card){
+  document.querySelectorAll('.metric-card').forEach(function(card){
     card.onclick=function(){
       var id='expand-'+card.dataset.expand,detailEl=el(id);
       if(!detailEl) return;
       var isOpen=detailEl.style.display!=='none';
       ['expand-net','expand-survival','expand-emi'].forEach(function(did){var d=el(did);if(d)d.style.display='none';});
-      document.querySelectorAll('.metric-row').forEach(function(c){c.classList.remove('active');});
+      document.querySelectorAll('.metric-card').forEach(function(c){c.classList.remove('active');});
       if(!isOpen){detailEl.style.display='block';card.classList.add('active');}
     };
   });
