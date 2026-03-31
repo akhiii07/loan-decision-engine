@@ -594,16 +594,16 @@ function generateRiskReality(ctx){
 
   // Immediate failure risk
   if(zS){
-    items.push({icon:'\u{1F534}',text:'Zero savings — any missed paycheck triggers immediate default. There is no buffer.'});
+    items.push({icon:'\uD83D\uDD34',text:'Zero savings — any missed paycheck triggers immediate default. There is no buffer.'});
   } else if(isFinite(realSurv)&&realSurv<3){
-    items.push({icon:'\u{1F534}',text:'You would exhaust savings in under 3 months under a '+shP+'% income shock. One event breaks this.'});
+    items.push({icon:'\uD83D\uDD34',text:'You would exhaust savings in under 3 months under a '+shP+'% income shock. One event breaks this.'});
   } else if(isFinite(realSurv)&&realSurv<6){
     items.push({icon:'\u26a0\ufe0f',text:'Under a job loss, savings last ~'+Math.floor(realSurv)+' months. '+(realSurv<4?'That is not enough runway to find new income.':'Build this to 6+ months for real safety.')});
   }
 
   // EMI stress
   if(emiPct>50){
-    items.push({icon:'\u{1F534}',text:'EMI takes '+emiPct+'% of income — emergencies, repairs, or health costs have almost no buffer.'});
+    items.push({icon:'\uD83D\uDD34',text:'EMI takes '+emiPct+'% of income — emergencies, repairs, or health costs have almost no buffer.'});
   } else if(emiPct>40){
     items.push({icon:'\u26a0\ufe0f',text:'At '+emiPct+'% EMI ratio, you are above the RBI safety threshold. Any income fall makes repayment painful.'});
   }
@@ -615,7 +615,7 @@ function generateRiskReality(ctx){
 
   // Rate risk
   if(ctx.rateShock&&ctx.rateShock.negAmort){
-    items.push({icon:'\u{1F534}',text:'A 2% rate rise would create a debt trap — interest would exceed your EMI payments and debt would grow.'});
+    items.push({icon:'\uD83D\uDD34',text:'A 2% rate rise would create a debt trap — interest would exceed your EMI payments and debt would grow.'});
   }
 
   // Unsecured debt
