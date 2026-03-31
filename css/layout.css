@@ -83,6 +83,27 @@ header p {
     grid-template-columns: 1fr;
     padding: 20px 16px;
   }
+  .container.results-full {
+    max-width: 100%;
+    padding: 12px 0;
+  }
+  header {
+    padding: 12px 16px;
+  }
+  header h1 {
+    font-size: 12px;
+  }
+  header p {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .container,
+  .container.wide,
+  .container.results-full {
+    padding: 8px 0;
+  }
 }
 
 /* Scrollbar */

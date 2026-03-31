@@ -2045,3 +2045,100 @@
 }
 
 .expand-arrow { font-size: 13px; color: var(--color-accent); }
+/* ═══════════════════════════════════════════════════════════
+   MOBILE OVERRIDES — results page
+   Strategy: append-only, never modifies existing rules.
+   Breakpoints: 720px (tablet/phone), 480px (small phone)
+═══════════════════════════════════════════════════════════ */
+
+@media (max-width: 720px) {
+
+  /* ── Hero — collapse 2-col grid to single column ── */
+  #hero {
+    grid-template-columns: 1fr;
+    padding: 24px 16px 20px;
+    gap: 14px;
+  }
+  .hero-score-col {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 10px;
+  }
+  .hero-score       { font-size: 52px; }
+  .hero-score-label { font-size: 16px; margin-top: 0; margin-bottom: 4px; }
+  .hero-verdict     { font-size: 18px; }
+  .hero-oneliner    { font-size: 13px; }
+  .hero-truth       { font-size: 12px; }
+  .hero-why-panel   { padding: 12px 14px; }
+  .ws-item          { padding: 12px 12px; }
+
+  /* ── Safety bar ── */
+  #safety-bar { padding: 14px 16px 18px; }
+  .sb-info-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  .sb-context { font-size: 9px; }
+
+  /* ── Core metrics — 3-col grid → single column ── */
+  #core-metrics { grid-template-columns: 1fr; }
+  .metric-card {
+    padding: 18px 16px;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .metric-card:last-child { border-bottom: none; }
+  .mc-value   { font-size: 28px; }
+  .mc-label   { font-size: 11px; }
+  .mc-context { font-size: 9px; }
+
+  /* ── Metric expand panel ── */
+  .metric-expand-panel { padding: 14px 16px; }
+  .ep-grid { grid-template-columns: 1fr; }
+
+  /* ── Impact grid — 4-col → 2-col ── */
+  .impact-grid { grid-template-columns: 1fr 1fr; }
+  .impact-tile { padding: 12px 10px; }
+  .impact-tile .tile-value { font-size: 18px; }
+
+  /* ── Worst case ── */
+  .wc-header      { padding: 12px 16px; gap: 8px; flex-wrap: wrap; }
+  .wc-stats-grid  { grid-template-columns: 1fr 1fr; padding: 0 16px; }
+  .wc-stat        { padding: 14px 0; }
+  .wcs-val        { font-size: 18px; }
+  .wc-life-block  { padding: 12px 16px; }
+
+  /* ── Top risks ── */
+  #top-risks { padding: 14px 16px; }
+
+  /* ── Decision delta ── */
+  #decision-delta { padding: 16px 16px; }
+
+  /* ── Split row — 2-col → 1-col ── */
+  .rp-split-row { grid-template-columns: 1fr; }
+  .rp-col-left  { border-right: none; border-bottom: 1px solid var(--color-border); }
+
+  /* ── Graph blocks ── */
+  .rp-graph-block { padding: 16px 16px; }
+
+  /* ── Score block ── */
+  .score-block { padding: 12px 16px; }
+  .score-ring  { width: 52px; height: 52px; font-size: 18px; }
+
+  /* ── Worst case wrap overrides ── */
+  .rp-worst-case-wrap .wc-stats-grid { grid-template-columns: 1fr 1fr; }
+  .rp-worst-case-wrap .impact-grid   { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 480px) {
+  #hero         { padding: 18px 12px 16px; }
+  .hero-score   { font-size: 44px; }
+  .hero-verdict { font-size: 16px; }
+  #safety-bar   { padding: 12px 12px 14px; }
+  .metric-card  { padding: 14px 12px; }
+  .mc-value     { font-size: 24px; }
+  .wc-stats-grid { grid-template-columns: 1fr 1fr; padding: 0 12px; }
+  .impact-grid   { grid-template-columns: 1fr 1fr; }
+}

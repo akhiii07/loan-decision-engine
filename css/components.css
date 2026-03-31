@@ -239,3 +239,37 @@ input[type="number"]::placeholder {
   text-transform: uppercase;
   margin-bottom: 7px;
 }
+/* ═══════════════════════════════════════
+   MOBILE — components responsive overrides
+   Breakpoints: 720px, 480px
+═══════════════════════════════════════ */
+
+@media (max-width: 720px) {
+  /* Form sections */
+  .form-section { padding: 18px 16px; }
+  .panel-header { padding: 10px 14px; }
+  #inputPanel   { min-height: unset; }
+
+  /* Section label is 35px on desktop — scale down */
+  .section-label { font-size: 20px; letter-spacing: 0.06em; }
+
+  /* Labels are 20px on desktop — scale down */
+  label { font-size: 15px; }
+
+  /* 2-col and 3-col field rows → single column */
+  .field-row  { grid-template-columns: 1fr; gap: 12px; }
+  .field-row3 { grid-template-columns: 1fr; gap: 10px; }
+
+  /* Input / select */
+  input[type="number"],
+  select { font-size: 15px; padding: 11px 12px; }
+
+  /* Review card title */
+  .rv-card-title { font-size: 1rem; }
+}
+
+@media (max-width: 480px) {
+  .section-label { font-size: 16px; }
+  label          { font-size: 14px; }
+  .form-section  { padding: 14px 12px; }
+}
