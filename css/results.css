@@ -2531,3 +2531,108 @@
 }
 
 .expand-arrow { font-size: 13px; color: var(--color-accent); }
+
+/* ═══════════════════════════════════════════════════════════
+   LIGHT THEME — Results Panel
+   Rocket Money / JMobbin: white cards, dark text, airy layout
+═══════════════════════════════════════════════════════════ */
+
+/* Redefine design tokens within results panel — cascades to all children */
+#resultsPanel {
+  --color-bg:        #f8fafc;
+  --color-surface:   #ffffff;
+  --color-surface-2: #f1f5f9;
+  --color-border:    #e2e8f0;
+  --color-border-2:  #cbd5e1;
+  --color-text:      #111827;
+  --color-muted:     #64748b;
+  background: #ffffff;
+  color: #111827;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.07), 0 1px 6px rgba(0,0,0,0.04);
+}
+
+/* ── Hero ── */
+#resultsPanel #hero { background: #ffffff; }
+#resultsPanel #hero::before { opacity: 0.45; }
+#resultsPanel .hero-truth {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #64748b;
+}
+#resultsPanel .hero-why-panel {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+#resultsPanel .hero-why-panel .ws-item {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+
+/* ── Safety bar ── */
+#resultsPanel #safety-bar {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+#resultsPanel .sb-cursor {
+  background: #374151;
+  border-color: #ffffff;
+}
+
+/* ── Core metrics ── */
+#resultsPanel #core-metrics { background: #ffffff; }
+#resultsPanel .metric-row   { border-color: #f0f4f8; }
+#resultsPanel .metric-row:hover  { background: #f8fafc; }
+#resultsPanel .metric-row.active { background: #f1f5f9; }
+#resultsPanel .mr-chevron { color: #cbd5e1; }
+#resultsPanel .metric-row:hover .mr-chevron,
+#resultsPanel .metric-row.active .mr-chevron { color: var(--color-accent); }
+
+/* ── Expand panels ── */
+#resultsPanel .metric-expand-panel { background: #f8fafc; border-color: #e2e8f0; }
+#resultsPanel .ep-item  { background: #ffffff; }
+#resultsPanel .ep-grid  { background: #e2e8f0; }
+#resultsPanel .ep-why   { background: rgba(240,192,64,0.07); }
+
+/* ── Loan cost reality ── */
+#resultsPanel #loan-cost-reality { background: #f8fafc; border-color: #e2e8f0; }
+#resultsPanel .lcr-grid  { border-color: #e2e8f0; }
+#resultsPanel .lcr-item  { border-color: #e2e8f0; }
+
+/* ── Biggest impact ── */
+#resultsPanel #biggest-impact { border-bottom-color: #e2e8f0; }
+#resultsPanel .bi-bullet { background: #f8fafc; border-color: #e2e8f0; }
+
+/* ── What if lab ── */
+#resultsPanel #what-if-lab { background: #f8fafc; border-color: #e2e8f0; }
+#resultsPanel .wil-state {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+#resultsPanel .wil-state-tag { color: #64748b; }
+#resultsPanel .wil-score { color: #111827; }
+#resultsPanel .wil-arrow { color: #cbd5e1; }
+
+/* ── Risk reality ── */
+#resultsPanel #risk-reality { background: #ffffff; border-color: #e2e8f0; }
+#resultsPanel .rr-item { background: #fff5f5; border-color: #fde8e8; }
+
+/* ── Next steps ── */
+#resultsPanel #next-steps { background: #f8fafc; }
+#resultsPanel #next-steps.v-SAFE     { background: rgba(52,211,153,0.06); }
+#resultsPanel #next-steps.v-MODERATE { background: rgba(96,165,250,0.06); }
+#resultsPanel #next-steps.v-RISKY    { background: rgba(251,191,36,0.06); }
+#resultsPanel #next-steps.v-DANGEROUS{ background: rgba(248,113,113,0.06); }
+#resultsPanel .ns-action { color: #4b5563; }
+
+/* WIL range track — light mode */
+#resultsPanel .wil-range {
+  background: #e2e8f0;
+}
+#resultsPanel .wil-range::-webkit-slider-thumb {
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+
+/* Verdict colors still pop on light bg — unchanged (green/blue/amber/red) */
+/* Hero score color-classes remain semantic — no override needed */
