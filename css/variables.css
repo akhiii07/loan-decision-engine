@@ -30,5 +30,6 @@
 
   /* Fonts */
   --font-mono:  'IBM Plex Mono', monospace;
-  --font-sans:  'IBM Plex Sans', sans-serif;
+  --font-sans:  'Inter', 'IBM Plex Sans', sans-serif;
+  --font-display: 'Inter', 'IBM Plex Sans', sans-serif;
 }

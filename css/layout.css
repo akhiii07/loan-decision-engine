@@ -72,9 +72,9 @@ header p {
 }
 
 .container.results-full {
-  max-width: 92vw;
+  max-width: 780px;
   grid-template-columns: 1fr;
-  padding: 20px 24px;
+  padding: 20px 0;
 }
 
 @media (max-width: 720px) {

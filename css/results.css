@@ -2044,4 +2044,438 @@
   .ns-headline { font-size: 18px; }
 }
 
+/* ═══════════════════════════════════════════════════════════
+   EXPENSIFY-INSPIRED REDESIGN — v4
+   Focused · Clean · Row-based · Narrative
+   All overrides below supersede earlier rules.
+═══════════════════════════════════════════════════════════ */
+
+/* ── Panel gets clean white border, no outer padding ── */
+#resultsPanel {
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--color-surface);
+}
+
+/* ── HERO — flat single-column ── */
+#hero {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 44px 40px 36px;
+  background: var(--color-surface);
+  position: relative;
+  overflow: hidden;
+}
+
+#hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 60% 40% at 95% 0%, rgba(52,211,153,0.07) 0%, transparent 65%);
+}
+#hero.v-RISKY::before     { background: radial-gradient(ellipse 60% 40% at 95% 0%, rgba(251,191,36,0.07) 0%, transparent 65%); }
+#hero.v-DANGEROUS::before { background: radial-gradient(ellipse 60% 40% at 95% 0%, rgba(248,113,113,0.08) 0%, transparent 65%); }
+#hero.v-MODERATE::before  { background: radial-gradient(ellipse 60% 40% at 95% 0%, rgba(96,165,250,0.07) 0%, transparent 65%); }
+
+.hero-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.hero-score-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+#hero .hero-score {
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+#hero .hero-score-label {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  color: var(--color-muted);
+  font-weight: 400;
+  margin-top: 0;
+}
+
+.hero-tag {
+  font-size: 11px;
+  padding: 5px 14px;
+  border-radius: 20px;
+  letter-spacing: 0.1em;
+}
+
+#hero .hero-verdict {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin-bottom: 10px;
+}
+
+#hero .hero-oneliner {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  color: var(--color-text);
+  line-height: 1.6;
+  margin-bottom: 14px;
+  opacity: 0.88;
+}
+
+#hero .hero-truth {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--color-muted);
+  line-height: 1.7;
+  padding: 10px 0 10px 14px;
+  border-left: 2px solid var(--color-border-2);
+  border-radius: 0;
+  background: none;
+  margin-bottom: 20px;
+}
+
+.hero-why-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  opacity: 0.55;
+  margin-bottom: 8px;
+  margin-top: 0;
+}
+
+.hero-why-panel {
+  margin-top: 0;
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+}
+
+/* ── SAFETY BAR — cleaner ── */
+#safety-bar {
+  padding: 20px 40px 22px;
+  background: var(--color-surface-2);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.sb-track {
+  height: 8px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.sb-zones {
+  border-radius: 4px;
+}
+
+.sb-fill {
+  border-radius: 4px;
+  opacity: 0.85;
+}
+
+.sb-cursor {
+  top: -5px;
+  width: 18px;
+  height: 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4), 0 0 0 2px var(--color-accent);
+}
+
+/* ── CORE METRICS — row layout ── */
+#core-metrics {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+  /* override the old grid */
+  grid-template-columns: unset;
+}
+
+.metric-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 40px;
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: background 0.15s;
+  position: relative;
+  user-select: none;
+}
+
+.metric-row:last-child {
+  border-bottom: none;
+}
+
+.metric-row:hover {
+  background: rgba(255,255,255,0.022);
+}
+
+.metric-row.active {
+  background: rgba(255,255,255,0.03);
+}
+
+.metric-row.active .mr-chevron {
+  color: var(--color-accent);
+  transform: rotate(90deg);
+}
+
+.mr-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.mr-label {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+  letter-spacing: 0.01em;
+}
+
+.mr-context {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  color: var(--color-muted);
+  line-height: 1.35;
+}
+
+.mr-data {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.mr-data .mc-value {
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.mr-data .mc-meaning {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  color: var(--color-muted);
+  text-align: right;
+  line-height: 1.3;
+}
+
+.mr-data .mc-benchmark {
+  font-size: 10px;
+  text-align: right;
+  margin-top: 2px;
+  padding: 2px 7px;
+}
+
+.mr-chevron {
+  font-size: 22px;
+  color: var(--color-border-2);
+  transition: transform 0.2s, color 0.2s;
+  flex-shrink: 0;
+  margin-left: 4px;
+  line-height: 1;
+}
+
+.metric-expand-panel {
+  background: var(--color-surface-2);
+  border-top: none;
+  border-bottom: 1px solid var(--color-border);
+  border-radius: 0;
+  padding: 16px 40px;
+}
+
+/* ── LOAN COST REALITY ── */
+#loan-cost-reality {
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+}
+
+.lcr-grid {
+  border: none;
+  border-radius: 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.lcr-item {
+  border-right-color: var(--color-border);
+}
+
+/* ── BIGGEST IMPACT ── */
+#biggest-impact {
+  background: none;
+  border: none;
+  border-top: 3px solid var(--color-accent);
+  border-bottom: 1px solid var(--color-border);
+  border-radius: 0;
+  padding: 28px 40px 32px;
+}
+
+.bi-eyebrow {
+  font-size: 10px;
+  color: var(--color-accent);
+  margin-bottom: 10px;
+}
+
+.bi-action {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  margin-bottom: 16px;
+}
+
+.bi-desc {
+  font-size: 13px;
+  color: var(--color-muted);
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+.bi-bullet {
+  font-size: 13px;
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+
+/* ── WHAT IF LAB ── */
+#what-if-lab {
+  background: var(--color-surface-2);
+  border: none;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  border-radius: 0;
+  padding: 28px 40px;
+}
+
+#what-if-lab::before { display: none; }
+
+.wil-title {
+  font-size: 12px;
+  color: var(--color-text);
+  opacity: 0.8;
+}
+
+.wil-subtitle {
+  font-size: 11px;
+  color: var(--color-muted);
+}
+
+.wil-range {
+  height: 4px;
+}
+
+.wil-range::-webkit-slider-thumb {
+  width: 18px;
+  height: 18px;
+}
+
+/* ── RISK REALITY ── */
+#risk-reality {
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+}
+
+.rr-item {
+  background: rgba(255,255,255,0.018);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* ── NEXT STEPS — premium full-width CTA ── */
+#next-steps {
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  padding: 44px 40px 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+}
+
+.ns-verdict-tag {
+  font-size: 11px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  align-self: flex-start;
+}
+
+.ns-headline {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.ns-action {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--color-muted);
+  line-height: 1.75;
+  max-width: 560px;
+}
+
+.ns-restart-btn {
+  margin-top: 12px;
+  padding: 14px 24px;
+  width: 100%;
+  text-align: center;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  letter-spacing: 0.02em;
+}
+
+.ns-restart-btn:hover {
+  background: rgba(255,255,255,0.11);
+  border-color: rgba(255,255,255,0.22);
+}
+
+/* ── Responsive overrides ── */
+@media (max-width: 640px) {
+  #hero { padding: 32px 20px 28px; }
+  .hero-top { flex-direction: column; align-items: flex-start; gap: 12px; }
+  #hero .hero-verdict { font-size: 22px; }
+  .metric-row { padding: 16px 20px; }
+  .mr-data .mc-value { font-size: 24px; }
+  #biggest-impact, #what-if-lab, #risk-reality, #next-steps { padding: 24px 20px; }
+  .lcr-grid { grid-template-columns: 1fr 1fr; }
+  #safety-bar { padding: 16px 20px; }
+  .metric-expand-panel { padding: 14px 20px; }
+  .ns-headline { font-size: 20px; }
+  #loan-cost-reality { padding: 20px 20px; }
+}
+
 .expand-arrow { font-size: 13px; color: var(--color-accent); }

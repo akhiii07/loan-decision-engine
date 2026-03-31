@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Loan Decision Engine</title>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/layout.css">
   <link rel="stylesheet" href="css/components.css">
@@ -294,19 +294,19 @@
 
     <!-- SECTION 1: HERO -->
     <div id="hero">
-      <div class="hero-score-col">
-        <div class="hero-score" id="heroScore">0</div>
-        <div class="hero-score-label">/ 100</div>
-      </div>
-      <div class="hero-content-col">
+      <div class="hero-top">
         <div class="hero-tag" id="heroVerdictTag"></div>
-        <div class="hero-verdict" id="heroVerdict"></div>
-        <div class="hero-oneliner" id="heroOneliner"></div>
-        <div class="hero-truth" id="heroTruth"></div>
-        <div class="hero-why-label">WHY THIS SCORE</div>
-        <div class="hero-why-panel" id="heroWhyPanel">
-          <div id="heroWhyContent"></div>
+        <div class="hero-score-wrap">
+          <span class="hero-score" id="heroScore">0</span>
+          <span class="hero-score-label">/ 100</span>
         </div>
+      </div>
+      <div class="hero-verdict" id="heroVerdict"></div>
+      <div class="hero-oneliner" id="heroOneliner"></div>
+      <div class="hero-truth" id="heroTruth"></div>
+      <div class="hero-why-label">WHY THIS SCORE</div>
+      <div class="hero-why-panel" id="heroWhyPanel">
+        <div id="heroWhyContent"></div>
       </div>
     </div>
 
@@ -336,41 +336,41 @@
 
     <!-- SECTION 3: 3 CORE METRICS -->
     <div id="core-metrics">
-      <div class="metric-card" data-expand="net">
-        <div class="mc-inner">
-          <div class="mc-top">
-            <div class="mc-value" id="cmNet"></div>
-            <div class="mc-icon">&#8594;</div>
-          </div>
+      <div class="metric-row" data-expand="net">
+        <div class="mr-meta">
+          <div class="mr-label">Cash Runway</div>
+          <div class="mr-context">months if income stops today</div>
+        </div>
+        <div class="mr-data">
+          <div class="mc-value" id="cmNet"></div>
           <div class="mc-meaning" id="cmNetMeaning"></div>
-          <div class="mc-label">Cash Runway</div>
-          <div class="mc-context">months if income stops today</div>
           <div class="mc-benchmark" id="cmNetBench"></div>
         </div>
+        <div class="mr-chevron">&#8250;</div>
       </div>
-      <div class="metric-card" data-expand="survival">
-        <div class="mc-inner">
-          <div class="mc-top">
-            <div class="mc-value" id="cmSurvival"></div>
-            <div class="mc-icon">&#8594;</div>
-          </div>
+      <div class="metric-row" data-expand="survival">
+        <div class="mr-meta">
+          <div class="mr-label">Months to Default</div>
+          <div class="mr-context">under a job loss scenario</div>
+        </div>
+        <div class="mr-data">
+          <div class="mc-value" id="cmSurvival"></div>
           <div class="mc-meaning" id="cmSurvivalMeaning"></div>
-          <div class="mc-label">Months to Default</div>
-          <div class="mc-context">under a job loss scenario</div>
           <div class="mc-benchmark" id="cmSurvBench"></div>
         </div>
+        <div class="mr-chevron">&#8250;</div>
       </div>
-      <div class="metric-card" data-expand="emi">
-        <div class="mc-inner">
-          <div class="mc-top">
-            <div class="mc-value" id="cmEmi"></div>
-            <div class="mc-icon">&#8594;</div>
-          </div>
+      <div class="metric-row" data-expand="emi">
+        <div class="mr-meta">
+          <div class="mr-label">Income Locked In</div>
+          <div class="mr-context">goes to repayments monthly</div>
+        </div>
+        <div class="mr-data">
+          <div class="mc-value" id="cmEmi"></div>
           <div class="mc-meaning" id="cmEmiMeaning"></div>
-          <div class="mc-label">Income Locked In</div>
-          <div class="mc-context">goes to repayments monthly</div>
           <div class="mc-benchmark" id="cmEmiBench"></div>
         </div>
+        <div class="mr-chevron">&#8250;</div>
       </div>
     </div>
 
