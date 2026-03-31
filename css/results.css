@@ -2045,25 +2045,26 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   EXPENSIFY-INSPIRED REDESIGN — v4
-   Focused · Clean · Row-based · Narrative
-   All overrides below supersede earlier rules.
+   FINANCIAL APP REDESIGN — v5
+   Rocket Money · Expensify inspired
+   Spacious · Large numbers · Clean rows · Prominent CTAs
 ═══════════════════════════════════════════════════════════ */
 
-/* ── Panel gets clean white border, no outer padding ── */
+/* ── Panel — elevated card ── */
 #resultsPanel {
-  border: 1px solid var(--color-border);
-  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 20px;
   overflow: hidden;
   background: var(--color-surface);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.3);
 }
 
-/* ── HERO — flat single-column ── */
+/* ── HERO — spacious, large number like Rocket Money ── */
 #hero {
   display: flex;
   flex-direction: column;
   gap: 0;
-  padding: 44px 40px 36px;
+  padding: 56px 64px 48px;
   background: var(--color-surface);
   position: relative;
   overflow: hidden;
@@ -2074,408 +2075,459 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(ellipse 60% 40% at 95% 0%, rgba(52,211,153,0.07) 0%, transparent 65%);
+  background: radial-gradient(ellipse 55% 45% at 100% 0%, rgba(52,211,153,0.08) 0%, transparent 65%);
 }
-#hero.v-RISKY::before     { background: radial-gradient(ellipse 60% 40% at 95% 0%, rgba(251,191,36,0.07) 0%, transparent 65%); }
-#hero.v-DANGEROUS::before { background: radial-gradient(ellipse 60% 40% at 95% 0%, rgba(248,113,113,0.08) 0%, transparent 65%); }
-#hero.v-MODERATE::before  { background: radial-gradient(ellipse 60% 40% at 95% 0%, rgba(96,165,250,0.07) 0%, transparent 65%); }
+#hero.v-RISKY::before     { background: radial-gradient(ellipse 55% 45% at 100% 0%, rgba(251,191,36,0.08) 0%, transparent 65%); }
+#hero.v-DANGEROUS::before { background: radial-gradient(ellipse 55% 45% at 100% 0%, rgba(248,113,113,0.09) 0%, transparent 65%); }
+#hero.v-MODERATE::before  { background: radial-gradient(ellipse 55% 45% at 100% 0%, rgba(96,165,250,0.08) 0%, transparent 65%); }
 
+/* Tag + score on one row — score is THE dominant element */
 .hero-top {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
 
 .hero-score-wrap {
   display: flex;
   align-items: baseline;
-  gap: 6px;
+  gap: 10px;
 }
 
+/* Score = Rocket Money's big dollar number */
 #hero .hero-score {
-  font-size: 64px;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.04em;
+  font-size: 96px;
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.05em;
 }
 
 #hero .hero-score-label {
   font-family: var(--font-mono);
-  font-size: 18px;
+  font-size: 24px;
   color: var(--color-muted);
   font-weight: 400;
   margin-top: 0;
+  letter-spacing: 0;
 }
 
+/* Verdict tag — pill like Expensify */
 .hero-tag {
   font-size: 11px;
-  padding: 5px 14px;
-  border-radius: 20px;
+  padding: 7px 18px;
+  border-radius: 24px;
   letter-spacing: 0.1em;
+  font-weight: 700;
 }
 
+/* Verdict headline — large, confident */
 #hero .hero-verdict {
   font-family: var(--font-display);
-  font-size: 30px;
+  font-size: 34px;
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.15;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
+  margin-top: 24px;
 }
 
+/* One-liner — clean body text */
 #hero .hero-oneliner {
   font-family: var(--font-sans);
-  font-size: 15px;
+  font-size: 16px;
   color: var(--color-text);
-  line-height: 1.6;
-  margin-bottom: 14px;
+  line-height: 1.65;
+  margin-bottom: 16px;
   opacity: 0.88;
 }
 
+/* Truth — quote-style, no box */
 #hero .hero-truth {
   font-family: var(--font-sans);
-  font-size: 13px;
+  font-size: 14px;
   color: var(--color-muted);
-  line-height: 1.7;
-  padding: 10px 0 10px 14px;
+  line-height: 1.75;
+  padding: 12px 0 12px 18px;
   border-left: 2px solid var(--color-border-2);
   border-radius: 0;
   background: none;
-  margin-bottom: 20px;
+  margin-bottom: 28px;
 }
 
+/* Why Score section */
 .hero-why-label {
   font-family: var(--font-mono);
   font-size: 9px;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--color-muted);
-  opacity: 0.55;
-  margin-bottom: 8px;
-  margin-top: 0;
+  opacity: 0.5;
+  margin-bottom: 10px;
 }
 
 .hero-why-panel {
   margin-top: 0;
-  padding: 14px 16px;
-  background: rgba(255,255,255,0.025);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 10px;
+  padding: 18px 20px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 12px;
 }
 
-/* ── SAFETY BAR — cleaner ── */
+/* ── SAFETY BAR — clean, spacious ── */
 #safety-bar {
-  padding: 20px 40px 22px;
-  background: var(--color-surface-2);
+  padding: 24px 64px 28px;
+  background: rgba(255,255,255,0.015);
   border-top: 1px solid var(--color-border);
   border-bottom: 1px solid var(--color-border);
 }
 
 .sb-track {
   height: 8px;
-  border-radius: 4px;
-  margin-bottom: 10px;
+  border-radius: 6px;
+  margin-bottom: 12px;
 }
 
-.sb-zones {
-  border-radius: 4px;
-}
-
-.sb-fill {
-  border-radius: 4px;
-  opacity: 0.85;
-}
+.sb-zones { border-radius: 6px; }
+.sb-fill  { border-radius: 6px; opacity: 0.9; }
 
 .sb-cursor {
-  top: -5px;
-  width: 18px;
-  height: 18px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.4), 0 0 0 2px var(--color-accent);
+  top: -6px;
+  width: 20px;
+  height: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.5), 0 0 0 3px var(--color-accent);
 }
 
-/* ── CORE METRICS — row layout ── */
+.sb-hint {
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+/* ── CORE METRICS — Rocket Money transaction-row style ── */
 #core-metrics {
   display: flex;
   flex-direction: column;
   border-bottom: 1px solid var(--color-border);
   background: var(--color-surface);
-  /* override the old grid */
   grid-template-columns: unset;
 }
 
+/* Each metric = a transaction row */
 .metric-row {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 20px 40px;
+  gap: 24px;
+  padding: 26px 64px;
   border-bottom: 1px solid var(--color-border);
   cursor: pointer;
   transition: background 0.15s;
-  position: relative;
   user-select: none;
 }
 
-.metric-row:last-child {
-  border-bottom: none;
+.metric-row:last-child { border-bottom: none; }
+.metric-row:hover      { background: rgba(255,255,255,0.025); }
+.metric-row.active     { background: rgba(255,255,255,0.03); }
+
+/* Left: label stack */
+.mr-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
 }
 
-.metric-row:hover {
-  background: rgba(255,255,255,0.022);
+.mr-label {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
+  letter-spacing: 0;
 }
 
-.metric-row.active {
-  background: rgba(255,255,255,0.03);
+.mr-context {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--color-muted);
+  line-height: 1.4;
 }
 
+/* Right: big value like Rocket Money amounts */
+.mr-data {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.mr-data .mc-value {
+  font-size: 46px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.mr-data .mc-meaning {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--color-muted);
+  text-align: right;
+  line-height: 1.35;
+}
+
+.mr-data .mc-benchmark {
+  font-size: 11px;
+  text-align: right;
+  margin-top: 4px;
+  padding: 3px 9px;
+  border-radius: 4px;
+}
+
+/* Chevron */
+.mr-chevron {
+  font-size: 24px;
+  color: var(--color-border-2);
+  transition: transform 0.2s, color 0.2s;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.metric-row:hover .mr-chevron,
 .metric-row.active .mr-chevron {
   color: var(--color-accent);
   transform: rotate(90deg);
 }
 
-.mr-meta {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  min-width: 0;
-}
-
-.mr-label {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--color-text);
-  letter-spacing: 0.01em;
-}
-
-.mr-context {
-  font-family: var(--font-sans);
-  font-size: 11px;
-  color: var(--color-muted);
-  line-height: 1.35;
-}
-
-.mr-data {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 3px;
-  flex-shrink: 0;
-}
-
-.mr-data .mc-value {
-  font-size: 30px;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.02em;
-}
-
-.mr-data .mc-meaning {
-  font-family: var(--font-sans);
-  font-size: 11px;
-  color: var(--color-muted);
-  text-align: right;
-  line-height: 1.3;
-}
-
-.mr-data .mc-benchmark {
-  font-size: 10px;
-  text-align: right;
-  margin-top: 2px;
-  padding: 2px 7px;
-}
-
-.mr-chevron {
-  font-size: 22px;
-  color: var(--color-border-2);
-  transition: transform 0.2s, color 0.2s;
-  flex-shrink: 0;
-  margin-left: 4px;
-  line-height: 1;
-}
-
+/* Expand panel */
 .metric-expand-panel {
   background: var(--color-surface-2);
   border-top: none;
   border-bottom: 1px solid var(--color-border);
   border-radius: 0;
-  padding: 16px 40px;
+  padding: 20px 64px;
 }
 
-/* ── LOAN COST REALITY ── */
+/* ── LOAN COST REALITY — spacious grid ── */
 #loan-cost-reality {
+  padding: 40px 64px;
   background: var(--color-surface);
   border-top: 1px solid var(--color-border);
 }
 
+.lcr-eyebrow {
+  margin-bottom: 20px;
+}
+
 .lcr-grid {
-  border: none;
-  border-radius: 0;
-  border-top: 1px solid var(--color-border);
-  border-bottom: 1px solid var(--color-border);
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-top: 0;
 }
 
 .lcr-item {
-  border-right-color: var(--color-border);
+  padding: 24px 28px;
+  border-right: 1px solid var(--color-border);
+}
+.lcr-item:last-child { border-right: none; }
+
+.lcr-primary .lcr-val { font-size: 42px; }
+.lcr-val { font-size: 32px; }
+
+.lcr-note {
+  margin-top: 16px;
+  font-size: 13px;
+  line-height: 1.65;
 }
 
-/* ── BIGGEST IMPACT ── */
+/* ── BIGGEST IMPACT — prominent, accented ── */
 #biggest-impact {
   background: none;
   border: none;
   border-top: 3px solid var(--color-accent);
   border-bottom: 1px solid var(--color-border);
   border-radius: 0;
-  padding: 28px 40px 32px;
+  padding: 36px 64px 40px;
 }
 
 .bi-eyebrow {
   font-size: 10px;
+  letter-spacing: 0.14em;
   color: var(--color-accent);
   margin-bottom: 10px;
 }
 
 .bi-action {
   font-family: var(--font-display);
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   line-height: 1.2;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 .bi-desc {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--color-muted);
-  margin-bottom: 12px;
-  line-height: 1.6;
+  margin-bottom: 14px;
+  line-height: 1.65;
 }
 
 .bi-bullet {
-  font-size: 13px;
-  padding: 8px 12px;
+  font-size: 14px;
+  padding: 10px 14px;
   background: rgba(255,255,255,0.025);
   border: 1px solid var(--color-border);
-  border-radius: 6px;
-  margin-bottom: 6px;
-  line-height: 1.5;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  line-height: 1.55;
 }
 
-/* ── WHAT IF LAB ── */
+/* ── WHAT IF LAB — clean, spacious ── */
 #what-if-lab {
   background: var(--color-surface-2);
   border: none;
   border-top: 1px solid var(--color-border);
   border-bottom: 1px solid var(--color-border);
   border-radius: 0;
-  padding: 28px 40px;
+  padding: 36px 64px;
 }
 
 #what-if-lab::before { display: none; }
 
 .wil-title {
-  font-size: 12px;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--color-text);
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
-.wil-subtitle {
-  font-size: 11px;
-  color: var(--color-muted);
-}
+.wil-subtitle { font-size: 12px; }
 
-.wil-range {
-  height: 4px;
-}
+.wil-sliders { gap: 28px; }
+
+.wil-range { height: 5px; }
 
 .wil-range::-webkit-slider-thumb {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
 }
 
 /* ── RISK REALITY ── */
 #risk-reality {
+  padding: 36px 64px;
   background: var(--color-surface);
   border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
 }
+
+.rr-eyebrow { margin-bottom: 18px; }
 
 .rr-item {
-  background: rgba(255,255,255,0.018);
+  background: rgba(255,255,255,0.02);
   border: 1px solid var(--color-border);
-  border-radius: 8px;
-  font-size: 13px;
-  line-height: 1.6;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 1.65;
+  padding: 14px 16px;
 }
 
-/* ── NEXT STEPS — premium full-width CTA ── */
+/* ── NEXT STEPS — Expensify-style green pill CTA ── */
 #next-steps {
   background: var(--color-surface);
-  border-top: 1px solid var(--color-border);
-  padding: 44px 40px 48px;
+  padding: 56px 64px 60px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 14px;
+  gap: 16px;
 }
 
+#next-steps.v-SAFE     { background: rgba(52,211,153,0.03); }
+#next-steps.v-MODERATE { background: rgba(96,165,250,0.03); }
+#next-steps.v-RISKY    { background: rgba(251,191,36,0.03); }
+#next-steps.v-DANGEROUS{ background: rgba(248,113,113,0.03); }
+
 .ns-verdict-tag {
-  font-size: 11px;
-  padding: 6px 16px;
-  border-radius: 20px;
+  font-size: 12px;
+  padding: 7px 18px;
+  border-radius: 24px;
   align-self: flex-start;
+  font-weight: 700;
+  letter-spacing: 0.08em;
 }
 
 .ns-headline {
   font-family: var(--font-display);
-  font-size: 28px;
+  font-size: 34px;
   font-weight: 700;
   letter-spacing: -0.02em;
-  line-height: 1.25;
+  line-height: 1.2;
 }
 
 .ns-action {
   font-family: var(--font-sans);
-  font-size: 14px;
+  font-size: 15px;
   color: var(--color-muted);
-  line-height: 1.75;
-  max-width: 560px;
+  line-height: 1.8;
+  max-width: 580px;
 }
 
+/* Expensify green pill CTA */
 .ns-restart-btn {
-  margin-top: 12px;
-  padding: 14px 24px;
+  margin-top: 16px;
+  padding: 18px 32px;
   width: 100%;
   text-align: center;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 10px;
-  font-family: var(--font-mono);
-  font-size: 13px;
-  color: var(--color-text);
+  background: var(--color-safe);
+  border: none;
+  border-radius: 50px;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 600;
+  color: #0a1a12;
   cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
-  letter-spacing: 0.02em;
+  transition: opacity 0.2s, transform 0.15s;
+  letter-spacing: 0.01em;
 }
 
 .ns-restart-btn:hover {
-  background: rgba(255,255,255,0.11);
-  border-color: rgba(255,255,255,0.22);
+  opacity: 0.88;
+  transform: translateY(-1px);
 }
 
-/* ── Responsive overrides ── */
-@media (max-width: 640px) {
-  #hero { padding: 32px 20px 28px; }
-  .hero-top { flex-direction: column; align-items: flex-start; gap: 12px; }
-  #hero .hero-verdict { font-size: 22px; }
-  .metric-row { padding: 16px 20px; }
-  .mr-data .mc-value { font-size: 24px; }
-  #biggest-impact, #what-if-lab, #risk-reality, #next-steps { padding: 24px 20px; }
+.ns-restart-btn:active { transform: translateY(0); }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  #hero, .metric-row, #loan-cost-reality, #biggest-impact,
+  #what-if-lab, #risk-reality, #next-steps, .metric-expand-panel,
+  #safety-bar { padding-left: 32px; padding-right: 32px; }
+  #hero .hero-score { font-size: 72px; }
+  #hero .hero-verdict { font-size: 26px; margin-top: 18px; }
+  .mr-data .mc-value { font-size: 36px; }
+  .metric-row { padding-top: 20px; padding-bottom: 20px; }
+  .ns-headline { font-size: 26px; }
   .lcr-grid { grid-template-columns: 1fr 1fr; }
-  #safety-bar { padding: 16px 20px; }
-  .metric-expand-panel { padding: 14px 20px; }
-  .ns-headline { font-size: 20px; }
-  #loan-cost-reality { padding: 20px 20px; }
+  .lcr-primary .lcr-val { font-size: 32px; }
+}
+
+@media (max-width: 640px) {
+  #hero, .metric-row, #loan-cost-reality, #biggest-impact,
+  #what-if-lab, #risk-reality, #next-steps, .metric-expand-panel,
+  #safety-bar { padding-left: 20px; padding-right: 20px; }
+  #hero { padding-top: 36px; padding-bottom: 32px; }
+  .hero-top { flex-direction: column; align-items: flex-start; gap: 14px; }
+  #hero .hero-score { font-size: 60px; }
+  #hero .hero-verdict { font-size: 22px; }
+  .mr-data .mc-value { font-size: 32px; }
+  .mr-label { font-size: 14px; }
+  .ns-headline { font-size: 22px; }
+  #next-steps { padding-top: 36px; padding-bottom: 40px; }
+  .wil-sliders { grid-template-columns: 1fr; }
 }
 
 .expand-arrow { font-size: 13px; color: var(--color-accent); }
