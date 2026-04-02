@@ -189,11 +189,6 @@ function renderResults(ctx) {
   var recs=buildRecommendations(ctx);
   el('recoList').innerHTML=recs.map(function(x){return'<li>'+x+'</li>';}).join('');
 
-  var ddB=el('deltaBlock');
-  if(delta&&delta.length>0){ddB.style.display='block';var dH='<div class="block-label">What to Change</div>';
-    delta.slice(0,4).forEach(function(d,i){dH+='<div class="scenario-row"><div><span class="scenario-label" style="color:var(--color-accent)">'+(i+1)+'. '+d.type+'</span></div><span class="scenario-value">'+d.message+'</span></div>';});
-    ddB.innerHTML=dH;}
-  else ddB.style.display='none';
 
   var pB=el('prepayBlock');
   if(pp){pB.style.display='block';pB.innerHTML='<div class="block-label">Prepayment Impact</div><div style="font-family:var(--font-mono);font-size:11px;line-height:1.7">Annual: '+formatRupees(pp.annualPrepay)+' \u00b7 Tenure: '+pp.origTenure+' \u2192 '+pp.newTenure+'mo (\u2212'+pp.savedYears+'yrs) \u00b7 Saved: <strong style="color:var(--color-safe)">'+formatLakh(pp.savedInterest)+'</strong></div>';}
