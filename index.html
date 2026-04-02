@@ -86,7 +86,7 @@
         <div class="field">
           <label>Annual Bonus (₹) <span class="hint">optional</span></label>
           <div class="input-prefix"><span>₹</span>
-            <input type="number" id="annualBonus" placeholder="0" min="0" value="0">
+            <input type="number" id="annualBonus" placeholder="e.g. 50000" min="0">
           </div>
         </div>
       </div>
@@ -101,19 +101,19 @@
           <div class="field">
             <label>Secured EMIs (₹/mo) <span class="hint">home, auto</span></label>
             <div class="input-prefix"><span>₹</span>
-              <input type="number" id="securedEMI" placeholder="0" min="0" value="0">
+              <input type="number" id="securedEMI" placeholder="e.g. 15000" min="0">
             </div>
           </div>
           <div class="field">
             <label>Unsecured EMIs (₹/mo) <span class="hint">personal, cards</span></label>
             <div class="input-prefix"><span>₹</span>
-              <input type="number" id="unsecuredEMI" placeholder="0" min="0" value="0">
+              <input type="number" id="unsecuredEMI" placeholder="e.g. 5000" min="0">
             </div>
           </div>
         </div>
         <div class="field">
           <label>Pending Tenure (months) <span class="hint">avg months remaining on existing loans · optional</span></label>
-          <input type="number" id="existingTenure" placeholder="e.g. 36" min="0" value="0">
+          <input type="number" id="existingTenure" placeholder="e.g. 36" min="0">
         </div>
       </div>
     </div>
@@ -125,7 +125,7 @@
         <p class="sf-microcopy">Essential and lifestyle spending shapes your disposable income.</p>
         <div class="field">
           <label>Dependents <span class="hint">spouse, children, parents</span></label>
-          <input type="number" id="dependents" placeholder="e.g. 2" min="0" value="0">
+          <input type="number" id="dependents" placeholder="e.g. 2" min="0">
         </div>
         <div class="field">
           <label>Essential (₹) <span class="hint">rent, food, utilities</span></label>
@@ -137,13 +137,13 @@
           <div class="field">
             <label>Lifestyle (₹)</label>
             <div class="input-prefix"><span>₹</span>
-              <input type="number" id="lifestyleExp" placeholder="0" min="0" value="0">
+              <input type="number" id="lifestyleExp" placeholder="e.g. 10000" min="0">
             </div>
           </div>
           <div class="field">
             <label>Semi-Fixed (₹) <span class="hint">school, family</span></label>
             <div class="input-prefix"><span>₹</span>
-              <input type="number" id="semiFixedExp" placeholder="0" min="0" value="0">
+              <input type="number" id="semiFixedExp" placeholder="e.g. 5000" min="0">
             </div>
           </div>
         </div>
@@ -159,19 +159,19 @@
           <div class="field">
             <label>Cash + Bank (₹) <span class="hint">instant</span></label>
             <div class="input-prefix"><span>₹</span>
-              <input type="number" id="cashBalance" placeholder="100000" min="0" value="0">
+              <input type="number" id="cashBalance" placeholder="e.g. 1,00,000" min="0">
             </div>
           </div>
           <div class="field">
             <label>Fixed Deposits (₹) <span class="hint">70% usable</span></label>
             <div class="input-prefix"><span>₹</span>
-              <input type="number" id="fdBalance" placeholder="0" min="0" value="0">
+              <input type="number" id="fdBalance" placeholder="e.g. 50000" min="0">
             </div>
           </div>
           <div class="field">
             <label>Other Invest. (₹) <span class="hint">30% usable</span></label>
             <div class="input-prefix"><span>₹</span>
-              <input type="number" id="otherSavings" placeholder="0" min="0" value="0">
+              <input type="number" id="otherSavings" placeholder="e.g. 20000" min="0">
             </div>
           </div>
         </div>
@@ -226,7 +226,7 @@
         </div>
         <div class="field">
           <label>Months Already Paid <span class="hint">0 if new</span></label>
-          <input type="number" id="monthsPaid" placeholder="0" min="0" value="0">
+          <input type="number" id="monthsPaid" placeholder="0 if new" min="0">
         </div>
         <div class="sf-live-indicator" id="liveEMI">
           <span class="sf-live-icon">📊</span>
@@ -244,13 +244,13 @@
           <div class="field">
             <label>Property Value (₹)</label>
             <div class="input-prefix"><span>₹</span>
-              <input type="number" id="propertyValue" placeholder="0" min="0" value="0">
+              <input type="number" id="propertyValue" placeholder="e.g. 50,00,000" min="0">
             </div>
           </div>
           <div class="field">
             <label>Down Payment (₹)</label>
             <div class="input-prefix"><span>₹</span>
-              <input type="number" id="downPayment" placeholder="0" min="0" value="0">
+              <input type="number" id="downPayment" placeholder="e.g. 10,00,000" min="0">
             </div>
           </div>
         </div>
@@ -550,6 +550,7 @@
 <script src="js/main.js"></script>
 <!-- Step flow controller — loads AFTER all engine scripts -->
 <script src="js/stepflow.js"></script>
+<script src="js/inr-format.js"></script>
 
 </body>
 </html>

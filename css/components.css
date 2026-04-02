@@ -148,6 +148,18 @@ input[type="number"]::placeholder {
   pointer-events: none;
 }
 
+/* Live INR formatted display below ₹ inputs */
+.inr-live {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-accent);
+  min-height: 14px;
+  margin-top: 5px;
+  letter-spacing: 0.03em;
+  opacity: 0.88;
+}
+
 /* Shock hint */
 .shock-hint {
   font-family: var(--font-mono);
