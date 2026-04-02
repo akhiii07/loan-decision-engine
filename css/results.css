@@ -611,14 +611,15 @@
 
 .hero-truth {
   font-family: var(--font-sans);
-  font-size: 13px;
-  color: var(--color-muted);
+  font-size: 15px;
+  color: var(--color-text);
   line-height: 1.7;
   padding: 12px 16px;
   background: var(--color-surface-2);
   border-radius: 8px;
   border-left: 3px solid var(--color-border-2);
   margin-top: 4px;
+  opacity: 0.9;
 }
 
 /* ── SAFETY BAR ── */
@@ -637,15 +638,16 @@
 
 .sb-label {
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 13px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--color-muted);
+  color: var(--color-text);
+  opacity: 0.85;
 }
 
 .sb-score {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--color-text);
 }
@@ -1344,7 +1346,7 @@
 }
 .bi-eyebrow {
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 18px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--color-accent);
@@ -1757,14 +1759,15 @@
 }
 .ws-factor {
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--color-muted);
+  color: var(--color-text);
+  opacity: 0.75;
 }
 .ws-val {
   font-family: var(--font-mono);
-  font-size: 20px;
+  font-size: 26px;
   font-weight: 700;
   line-height: 1;
 }
@@ -1773,8 +1776,9 @@
 .ws-val.bad  { color: var(--color-danger); }
 .ws-label {
   font-family: var(--font-sans);
-  font-size: 10px;
-  color: var(--color-muted);
+  font-size: 12px;
+  color: var(--color-text);
+  opacity: 0.7;
   line-height: 1.35;
 }
 .ws-label.high { color: var(--color-danger); }
@@ -1805,8 +1809,9 @@
 
 .sb-context {
   font-family: var(--font-sans);
-  font-size: 11px;
-  color: var(--color-muted);
+  font-size: 13px;
+  color: var(--color-text);
+  opacity: 0.75;
   font-style: italic;
 }
 .sb-action {
@@ -1844,11 +1849,11 @@
 .hero-why-label {
   margin-top: 16px;
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 13px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-muted);
-  opacity: 0.7;
+  color: var(--color-text);
+  opacity: 0.85;
 }
 
 /* ── Loan Cost Reality ── */
@@ -1941,7 +1946,7 @@
 
 .rr-eyebrow {
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 18px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #fbbf24;
